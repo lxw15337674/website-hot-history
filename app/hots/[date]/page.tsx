@@ -10,8 +10,8 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { DatePicker } from '@/components/DayPicker';
-import { numberWithUnit } from '@/lib/utils';
-import { generateHotSearchMetadata } from '@/lib/metadata';
+import { numberWithUnit } from '@/public/src/lib/utils';
+import { generateHotSearchMetadata } from '@/public/src/lib/metadata';
 
 interface HotsProps {
   params: Promise<{ date: string }>;
@@ -31,16 +31,23 @@ interface SavedWeibo {
 }
 
 async function getData(date: string): Promise<SavedWeibo[]> {
-  const res = await fetch(
-    // `https://cdn.jsdelivr.net/gh/lxw15337674/weibo-trending-hot-history@master/api/${date}/summary.json`,
-    `https://raw.githubusercontent.com/lxw15337674/weibo-trending-hot-history/master/api/${date}/summary.json`,
-    {
-      next: { revalidate: 60 }
-    })
-  if (!res.ok) {
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    const res = await fetch(
+      `${baseUrl}/api/weibo-hot-history/${date}`,
+      {
+        next: { revalidate: 60 }
+      }
+    );
+    if (!res.ok) {
+      console.error(`Failed to fetch data for ${date}:`, res.status, res.statusText);
+      return [];
+    }
+    return res.json();
+  } catch (error) {
+    console.error(`Error fetching data for ${date}:`, error);
     return [];
   }
-  return res.json()
 }
 
 export async function generateMetadata(

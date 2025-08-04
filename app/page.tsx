@@ -16,23 +16,19 @@ interface SavedWeibo {
 }
 
 async function getLatestHots(): Promise<SavedWeibo[]> {
-  const today = dayjs().format('YYYY-MM-DD');
   try {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
     const res = await fetch(
-      `https://raw.githubusercontent.com/lxw15337674/weibo-trending-hot-history/master/api/${today}/summary.json`,
+      `${baseUrl}/api/weibo-hot-history/latest`,
       { next: { revalidate: 300 } } // 5分钟缓存
     );
     if (!res.ok) {
-      // 如果今天没有数据，尝试昨天
-      const yesterday = dayjs().subtract(1, 'day').format('YYYY-MM-DD');
-      const res2 = await fetch(
-        `https://raw.githubusercontent.com/lxw15337674/weibo-trending-hot-history/master/api/${yesterday}/summary.json`,
-        { next: { revalidate: 300 } }
-      );
-      return res2.ok ? res2.json() : [];
+      console.error('Failed to fetch latest hots:', res.status, res.statusText);
+      return [];
     }
     return res.json();
-  } catch {
+  } catch (error) {
+    console.error('Error fetching latest hots:', error);
     return [];
   }
 }

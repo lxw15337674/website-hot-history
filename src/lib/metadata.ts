@@ -68,7 +68,7 @@ export function generateHotSearchMetadata(
   const topicKeywords = realHotSearches
     .slice(0, 20)
     .map(item => cleanTopicTitle(item.title))
-    .filter(topic => topic.length > 0);
+    ?.filter(topic => topic.length > 0) ?? [];
 
   const baseKeywords = [
     '微博热搜',

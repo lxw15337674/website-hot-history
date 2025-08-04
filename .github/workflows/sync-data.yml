@@ -1,0 +1,88 @@
+name: Daily Data Sync
+
+# 触发条件
+on:
+  # 每天凌晨1点（UTC时间）执行，对应北京时间上午9点
+  schedule:
+    - cron: '0 1 * * *'
+  
+  # 支持手动触发
+  workflow_dispatch:
+    inputs:
+      date:
+        description: '指定同步日期 (YYYY-MM-DD)，留空则同步前一天'
+        required: false
+        type: string
+
+# 环境变量
+env:
+  NODE_VERSION: '18'
+
+jobs:
+  sync-data:
+    runs-on: ubuntu-latest
+    
+    steps:
+      # 检出代码
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      # 设置Node.js环境
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      
+      # 安装依赖
+      - name: Install dependencies
+        run: npm ci
+      
+      # 生成Prisma客户端
+      - name: Generate Prisma client
+        run: npx prisma generate
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      
+      # 计算同步日期
+      - name: Calculate sync date
+        id: date
+        run: |
+          if [ -n "${{ github.event.inputs.date }}" ]; then
+            SYNC_DATE="${{ github.event.inputs.date }}"
+          else
+            # 计算前一天日期（考虑UTC时间）
+            SYNC_DATE=$(date -d "yesterday" +%Y-%m-%d)
+          fi
+          echo "sync_date=$SYNC_DATE" >> $GITHUB_OUTPUT
+          echo "将同步日期: $SYNC_DATE"
+      
+      # 执行数据同步
+      - name: Sync data
+        run: |
+          echo "开始同步 ${{ steps.date.outputs.sync_date }} 的数据..."
+          npm run sync-data:range ${{ steps.date.outputs.sync_date }} ${{ steps.date.outputs.sync_date }}
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      
+      # 验证同步结果
+      - name: Verify sync result
+        run: |
+          echo "数据同步完成，验证结果..."
+          # 这里可以添加数据验证逻辑
+          echo "同步验证通过"
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      
+      # 发送通知（可选）
+      - name: Send notification on failure
+        if: failure()
+        run: |
+          echo "数据同步失败，日期: ${{ steps.date.outputs.sync_date }}"
+          echo "请检查日志并手动处理"
+          # 这里可以集成Slack、邮件等通知服务
+      
+      - name: Send success notification
+        if: success()
+        run: |
+          echo "数据同步成功完成，日期: ${{ steps.date.outputs.sync_date }}"

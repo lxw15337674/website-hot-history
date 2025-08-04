@@ -22,7 +22,7 @@
     "baseUrl": ".",
     "paths": {
       "@/*": [
-        "./app/*"
+        "./src/*"
       ],
       "@/public/*": [
         "./*"
@@ -47,6 +47,5 @@
   ],
   "exclude": [
     "node_modules",
-    "public/sw.js"
   ]
 }

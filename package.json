@@ -7,7 +7,10 @@
     "build": "npx prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
-    "migrate": "npx prisma db pull && npx prisma generate"
+    "migrate": "npx prisma db pull && npx prisma generate",
+    "sync-data": "tsx scripts/sync-data.ts",
+    "sync-data:range": "tsx scripts/sync-data.ts",
+    "test-sync": "tsx scripts/test-sync.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.13.0",
@@ -24,6 +27,7 @@
     "date-fns": "^3.6.0",
     "dayjs": "^1.11.13",
     "decimal.js": "^10.6.0",
+    "dotenv": "^17.2.1",
     "lucide-react": "^0.379.0",
     "next": "^15.4.5",
     "next-themes": "^0.3.0",
