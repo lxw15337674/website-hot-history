@@ -10,8 +10,8 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { DatePicker } from '@/components/DayPicker';
-import { numberWithUnit } from '@/public/app/lib/utils';
-import { generateHotSearchMetadata } from '@/public/app/lib/metadata';
+import { numberWithUnit } from '@/lib/utils';
+import { generateHotSearchMetadata } from '@/lib/metadata';
 
 interface HotsProps {
   params: Promise<{ date: string }>;
