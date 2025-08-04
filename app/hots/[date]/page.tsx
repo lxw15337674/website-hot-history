@@ -10,12 +10,12 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { DatePicker } from '@/components/DayPicker';
-import { numberWithUnit } from '@/lib/utils';
-import { generateHotSearchMetadata } from '@/lib/metadata';
+import { numberWithUnit } from '@/public/app/lib/utils';
+import { generateHotSearchMetadata } from '@/public/app/lib/metadata';
 
 interface HotsProps {
-  params: { date: string };
-  searchParams: { sort: string };
+  params: Promise<{ date: string }>;
+  searchParams: Promise<{ sort: string }>;
 }
 
 interface SavedWeibo {
@@ -46,7 +46,7 @@ async function getData(date: string): Promise<SavedWeibo[]> {
 export async function generateMetadata(
   { params }: HotsProps,
 ): Promise<Metadata> {
-  const date = params.date;
+  const { date } = await params;
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://weibo-trending-hot-history.vercel.app';
   const pageUrl = `${baseUrl}/hots/${date}`;
   const formattedDate = dayjs(date).format('YYYY年MM月DD日');
@@ -108,7 +108,9 @@ export async function generateMetadata(
   };
 }
 
-export default async function Hots({ params: { date }, searchParams: { sort = 'hot' } }: HotsProps) {
+export default async function Hots({ params, searchParams }: HotsProps) {
+  const { date } = await params;
+  const { sort = 'hot' } = await searchParams;
   const data = await getData(date || dayjs().format('YYYY-MM-DD'));
   const formattedDate = dayjs(date).format('YYYY年MM月DD日');
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://weibo-trending-hot-history.vercel.app';
