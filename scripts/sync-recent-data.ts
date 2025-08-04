@@ -1,4 +1,7 @@
-import prisma from '../src/db/index';
+import 'dotenv/config';
+import dayjs from 'dayjs';
+import { db } from '../src/db/index';
+import { weiboHotHistory } from '../db/schema';
 
 interface WeiboHotItem {
   title: string;
@@ -49,23 +52,23 @@ async function syncDataForDate(date: string): Promise<number> {
   }
 
   try {
-    // 使用 Prisma 直接插入数据
-    const result = await prisma.weiboHotHistory.createMany({
-      data: weiboData.data.map(item => ({
+    // 使用 Drizzle 直接插入数据
+    const result = await db.insert(weiboHotHistory).values(
+      weiboData.data.map(item => ({
         title: item.title,
         category: item.category || null,
         url: item.url,
         hot: item.hot,
         ads: item.ads || false,
-        readCount: BigInt(Math.floor(Number(item.readCount) || 0)),
+        readCount: Math.floor(Number(item.readCount) || 0),
         discussCount: item.discussCount || 0,
         origin: item.origin || 0,
-      })),
-      skipDuplicates: true,
-    });
+        createdAt: dayjs(date).toISOString() // 使用日期作为创建时间
+      }))
+    );
 
-    console.log(`Synced ${result.count} records for ${date}.`);
-    return result.count;
+    console.log(`Synced ${weiboData.data.length} records for ${date}.`);
+     return weiboData.data.length;
   } catch (error) {
     console.error(`❌ ${date}: Failed to sync data -`, error);
     return 0;
@@ -98,6 +101,15 @@ async function main() {
   console.log(`🚀 Starting data sync from ${startDate} to ${endDate}...`);
   console.log(`📅 Current time: ${new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' })}`);
   
+  // 清空数据库表
+  console.log('🗑️ Clearing existing data...');
+  try {
+    await db.delete(weiboHotHistory);
+    console.log('✅ Database cleared successfully');
+  } catch (error) {
+    console.error('❌ Failed to clear database:', error);
+    return;
+  }
   const dates = getDateRange(startDate, endDate);
   let totalRecords = 0;
   let successfulDays = 0;
@@ -132,11 +144,11 @@ async function main() {
       console.log(`\n⚠️  Completed with ${failedDays} failed days.`);
     }
     
-    await prisma.$disconnect();
+    // Drizzle 不需要手动断开连接
     process.exit(0);
   } catch (error) {
     console.error('❌ Sync process failed:', error);
-    await prisma.$disconnect();
+    // Drizzle 不需要手动断开连接
     process.exit(1);
   }
 }

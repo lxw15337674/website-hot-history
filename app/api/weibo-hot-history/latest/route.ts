@@ -1,5 +1,7 @@
-import { NextResponse } from 'next/server';
-import prisma from '../../../../src/db/index';
+import { NextRequest, NextResponse } from 'next/server';
+import { db } from '../../../../src/db/index';
+import { weiboHotHistory } from '../../../../db/schema';
+import { desc, gte, lte, and } from 'drizzle-orm';
 import dayjs from 'dayjs';
 
 export async function GET() {
@@ -22,7 +24,7 @@ export async function GET() {
       url: string;
       hot: number;
       ads: boolean;
-      readCount: bigint;
+      readCount: number;
       discussCount: number;
       origin: number;
     }) => ({
@@ -55,25 +57,24 @@ async function getDataForDate(date: dayjs.Dayjs) {
   const startOfDay = date.startOf('day').toDate();
   const endOfDay = date.endOf('day').toDate();
 
-  return await prisma.weiboHotHistory.findMany({
-    where: {
-      createdAt: {
-        gte: startOfDay,
-        lte: endOfDay,
-      },
-    },
-    select: {
-      title: true,
-      category: true,
-      url: true,
-      hot: true,
-      ads: true,
-      readCount: true,
-      discussCount: true,
-      origin: true,
-    },
-    orderBy: {
-      hot: 'desc',
-    },
-  });
+  return await db
+    .select({
+      title: weiboHotHistory.title,
+      category: weiboHotHistory.category,
+      url: weiboHotHistory.url,
+      hot: weiboHotHistory.hot,
+      ads: weiboHotHistory.ads,
+      readCount: weiboHotHistory.readCount,
+      discussCount: weiboHotHistory.discussCount,
+      origin: weiboHotHistory.origin,
+    })
+    .from(weiboHotHistory)
+    .where(
+       and(
+         gte(weiboHotHistory.createdAt, startOfDay.toISOString()),
+         lte(weiboHotHistory.createdAt, endOfDay.toISOString())
+       )
+     )
+    .orderBy(desc(weiboHotHistory.hot))
+    .limit(500);
 }

@@ -1,5 +1,7 @@
+import 'dotenv/config';
 import dayjs from 'dayjs';
-import prisma from '../src/db/index';
+import { db } from '../src/db/index';
+import { weiboHotHistory } from '../db/schema';
 
 interface GitHubWeibo {
   title: string;
@@ -55,14 +57,11 @@ async function syncDataForDate(date: string) {
   }));
   
   try {
-    // 使用Prisma直接批量插入数据
-    const result = await prisma.weiboHotHistory.createMany({
-      data: dbData,
-      skipDuplicates: true, // 跳过重复数据
-    });
+    // 使用Drizzle批量插入数据
+    const result = await db.insert(weiboHotHistory).values(dbData);
     
-    console.log(`Synced ${result.count} records for ${date}.`);
-    return result.count;
+    console.log(`Synced ${dbData.length} records for ${date}.`);
+    return dbData.length;
   } catch (error) {
     console.error(`Error syncing data for ${date}:`, error);
     return 0;
@@ -119,16 +118,16 @@ async function main() {
   
   if (failureCount > 0) {
     console.log(`\n⚠️  Some syncs failed. Please check the logs above.`);
-    await prisma.$disconnect();
+    // Drizzle doesn't need explicit disconnect
     process.exit(1); // 退出码1表示有错误
   } else {
     console.log(`\n🎉 All syncs completed successfully!`);
-    await prisma.$disconnect();
+    // Drizzle doesn't need explicit disconnect
   }
 }
 
 main().catch(async (e) => {
   console.error('Sync failed:', e);
-  await prisma.$disconnect();
+  // Drizzle doesn't need explicit disconnect
   process.exit(1);
 });

@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import dayjs from 'dayjs';
-import prisma from '../../../../src/db';
+import { db } from '../../../../src/db/index';
+import { weiboHotHistory } from '../../../../db/schema';
+import { desc, gte, lte, and } from 'drizzle-orm';
 
 interface RouteParams {
   params: Promise<{ date: string }>;
@@ -26,27 +28,25 @@ export async function GET(
     const endOfDay = dayjs(date).endOf('day').toDate();
 
     // 从数据库查询数据
-    const data = await prisma.weiboHotHistory.findMany({
-      where: {
-        createdAt: {
-          gte: startOfDay,
-          lte: endOfDay,
-        },
-      },
-      select: {
-        title: true,
-        category: true,
-        url: true,
-        hot: true,
-        ads: true,
-        readCount: true,
-        discussCount: true,
-        origin: true,
-      },
-      orderBy: {
-        hot: 'desc',
-      },
-    });
+    const data = await db
+      .select({
+        title: weiboHotHistory.title,
+        category: weiboHotHistory.category,
+        url: weiboHotHistory.url,
+        hot: weiboHotHistory.hot,
+        ads: weiboHotHistory.ads,
+        readCount: weiboHotHistory.readCount,
+        discussCount: weiboHotHistory.discussCount,
+        origin: weiboHotHistory.origin,
+      })
+      .from(weiboHotHistory)
+      .where(
+         and(
+           gte(weiboHotHistory.createdAt, startOfDay.toISOString()),
+           lte(weiboHotHistory.createdAt, endOfDay.toISOString())
+         )
+       )
+      .orderBy(desc(weiboHotHistory.hot));
 
     // 转换数据格式以匹配前端期望的格式
     const formattedData = data.map((item: {
@@ -55,7 +55,7 @@ export async function GET(
       url: string;
       hot: number;
       ads: boolean;
-      readCount: bigint;
+      readCount: number;
       discussCount: number;
       origin: number;
     }) => ({

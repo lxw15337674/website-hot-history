@@ -1,0 +1,5 @@
+onlyBuiltDependencies:
+  - '@prisma/client'
+  - prisma
+  - sharp
+  - unrs-resolver

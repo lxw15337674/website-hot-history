@@ -1,4 +1,3 @@
-import type { Metadata } from 'next';
 import Link from 'next/link';
 import dayjs from 'dayjs';
 import { Badge } from '@/components/ui/badge';
@@ -11,7 +10,6 @@ import {
 } from "@/components/ui/card"
 import { DatePicker } from '@/components/DayPicker';
 import { numberWithUnit } from '@/public/src/lib/utils';
-import { generateHotSearchMetadata } from '@/public/src/lib/metadata';
 
 interface HotsProps {
   params: Promise<{ date: string }>;
@@ -50,128 +48,16 @@ async function getData(date: string): Promise<SavedWeibo[]> {
   }
 }
 
-export async function generateMetadata(
-  { params }: HotsProps,
-): Promise<Metadata> {
-  const { date } = await params;
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://weibo-trending-hot-history.vercel.app';
-  const pageUrl = `${baseUrl}/hots/${date}`;
-  const formattedDate = dayjs(date).format('YYYY年MM月DD日');
 
-  // 获取当天热搜数据来生成动态metadata
-  let dynamicMetadata;
-  try {
-    const data = await getData(date);
-    dynamicMetadata = generateHotSearchMetadata(date, data);
-  } catch (error) {
-    // 如果获取数据失败，使用默认metadata
-    dynamicMetadata = {
-      title: `${date} 微博热搜榜单`,
-      description: `查看${formattedDate}的微博热搜榜单，了解当日热点事件和社会话题。`,
-      keywords: [`微博热搜 ${date}`, `${formattedDate}热搜`, '微博榜单', '热点事件', '社会热点']
-    };
-  }
-
-  return {
-    title: dynamicMetadata.title,
-    description: dynamicMetadata.description,
-    keywords: dynamicMetadata.keywords,
-    openGraph: {
-      title: dynamicMetadata.title,
-      description: dynamicMetadata.description,
-      url: pageUrl,
-      type: 'article',
-      publishedTime: dayjs(date).toISOString(),
-      modifiedTime: new Date().toISOString(),
-      section: '微博热搜',
-      authors: ['微博热搜历史归档'],
-      images: [
-        {
-          url: `${baseUrl}/og-image-${date}.png`,
-          width: 1200,
-          height: 630,
-          alt: `${formattedDate}微博热搜榜单`,
-        }
-      ],
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: dynamicMetadata.title,
-      description: dynamicMetadata.description,
-      images: [`${baseUrl}/og-image-${date}.png`],
-    },
-    alternates: {
-      canonical: pageUrl,
-    },
-    robots: {
-      index: true,
-      follow: true,
-    },
-    other: {
-      'article:published_time': dayjs(date).toISOString(),
-      'article:modified_time': new Date().toISOString(),
-      'article:section': '微博热搜',
-    },
-  };
-}
 
 export default async function Hots({ params, searchParams }: HotsProps) {
   const { date } = await params;
   const { sort = 'hot' } = await searchParams;
   const data = await getData(date || dayjs().format('YYYY-MM-DD'));
   const formattedDate = dayjs(date).format('YYYY年MM月DD日');
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://weibo-trending-hot-history.vercel.app';
-
-  // 生成结构化数据
-  const structuredData = {
-    "@context": "https://schema.org",
-    "@type": "ItemList",
-    "name": `${formattedDate}微博热搜榜单`,
-    "description": `${formattedDate}的微博热搜排行榜，包含当日最热门的话题和事件`,
-    "url": `${baseUrl}/hots/${date}`,
-    "datePublished": dayjs(date).toISOString(),
-    "dateModified": new Date().toISOString(),
-    "itemListElement": data.slice(0, 10).map((item, index) => ({
-      "@type": "ListItem",
-      "position": index + 1,
-      "item": {
-        "@type": "Article",
-        "name": item.title,
-        "description": item.description || "微博热搜话题",
-        "url": `https://s.weibo.com/weibo?q=%23${item.title}%23`,
-        "datePublished": dayjs(date).toISOString(),
-        "author": {
-          "@type": "Organization",
-          "name": "微博"
-        },
-        "publisher": {
-          "@type": "Organization",
-          "name": "微博热搜历史归档"
-        },
-        "interactionStatistic": [
-          {
-            "@type": "InteractionCounter",
-            "interactionType": "https://schema.org/ViewAction",
-            "userInteractionCount": item.hot || 0
-          }
-        ]
-      }
-    })),
-    "publisher": {
-      "@type": "Organization",
-      "name": "微博热搜历史归档"
-    }
-  };
 
   return (
-    <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(structuredData)
-        }}
-      />
-      <main className="p-5 lg:p-0 lg:pt-5">
+    <main className="p-5 lg:p-0 lg:pt-5">
         <div className="mx-auto max-w-[980px]">
           <h1 className="sr-only">{formattedDate}微博热搜榜单</h1>
           <Menubar className="flex justify-between">
@@ -243,6 +129,5 @@ export default async function Hots({ params, searchParams }: HotsProps) {
           })}
         </div>
       </main>
-    </>
   );
 }
