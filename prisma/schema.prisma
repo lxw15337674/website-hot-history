@@ -1,0 +1,22 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model WeiboHotHistory {
+  id           Int      @id @default(autoincrement())
+  title        String
+  category     String?
+  url          String
+  hot          Int
+  ads          Boolean
+  readCount    BigInt
+  discussCount Int
+  origin       Int
+  createdAt    DateTime @default(now())
+}
