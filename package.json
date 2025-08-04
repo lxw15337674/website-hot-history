@@ -10,7 +10,7 @@
     "migrate": "npx prisma db pull && npx prisma generate",
     "sync-data": "tsx scripts/sync-data.ts",
     "sync-data:range": "tsx scripts/sync-data.ts",
-    "test-sync": "tsx scripts/test-sync.ts"
+    "sync-recent-data": "tsx scripts/sync-recent-data.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.13.0",
