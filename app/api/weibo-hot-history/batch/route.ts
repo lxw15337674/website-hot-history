@@ -1,5 +1,5 @@
+import { Prisma, PrismaClient } from '../../../../generated/prisma';
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient, Prisma } from '../../../../generated/prisma';
 
 const prisma = new PrismaClient();
 const MAX_BATCH = 1000;
