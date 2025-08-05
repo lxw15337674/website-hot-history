@@ -44,15 +44,6 @@ export async function GET(
       );
     }
 
-    // 限制查询范围（例如最多30天）
-    const daysDiff = toDate.diff(fromDate, 'day');
-    if (daysDiff > 30) {
-      return NextResponse.json(
-        { error: 'Date range cannot exceed 30 days' },
-        { status: 400 }
-      );
-    }
-
     // 计算日期范围
     const startOfRange = fromDate.startOf('day').toDate();
     const endOfRange = toDate.endOf('day').toDate();
@@ -97,6 +88,7 @@ export async function GET(
             readCount: weiboHotHistory.readCount,
             discussCount: weiboHotHistory.discussCount,
             origin: weiboHotHistory.origin,
+            createdAt: weiboHotHistory.createdAt,
           })
           .from(weiboHotHistory)
           .where(
@@ -110,12 +102,6 @@ export async function GET(
         
         const queryTime = Date.now() - startTime;
         console.log(`Database query executed in ${queryTime}ms for range ${from} to ${to}`);
-        
-        // 记录慢查询
-        if (queryTime > 1000) {
-          console.warn(`Slow query detected: ${queryTime}ms for range ${from} to ${to}`);
-        }
-        
         return data;
       },
       // 缓存时间：5分钟

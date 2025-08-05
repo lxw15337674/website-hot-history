@@ -24,4 +24,5 @@ export interface SavedWeibo {
     readCount?: number;
     discussCount?: number;
     origin?: number;
+    createdAt: string;
 }

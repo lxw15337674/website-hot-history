@@ -3,6 +3,7 @@ import { SavedWeibo } from '../../type';
 import { Badge } from './ui/badge';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './ui/card';
 import { numberWithUnit } from '../lib/utils';
+import dayjs from 'dayjs';
 
 interface WeiboListProps {
   data: SavedWeibo[];
@@ -31,6 +32,9 @@ export function WeiboList({ data }: WeiboListProps) {
                     {item.category}
                   </Badge>
                 )}
+                <Badge variant="outline">
+                  {dayjs(item.createdAt).format('YYYY-MM-DD')}
+                </Badge>
               </div>
             </div>
             {item.description && (
@@ -40,8 +44,8 @@ export function WeiboList({ data }: WeiboListProps) {
             )}
           </CardHeader>
 
-          <CardFooter className="flex justify-between text-sm text-gray-500 dark:text-gray-400 pt-4 mt-auto">
-            <div className="flex items-center space-x-4">
+          <CardFooter className="flex flex-col space-y-2 text-sm text-gray-500 dark:text-gray-400 pt-4 mt-auto">
+            <div className="flex  space-x-2">
               <span>热度: {numberWithUnit(item.hot)}</span>
               {item.readCount !== undefined && item.readCount > 0 && (
                 <span>阅读: {numberWithUnit(item.readCount)}</span>
@@ -52,6 +56,7 @@ export function WeiboList({ data }: WeiboListProps) {
               {item.origin !== undefined && item.origin > 0 && (
                 <span>原创: {numberWithUnit(item.origin)}</span>
               )}
+
             </div>
           </CardFooter>
         </Card>

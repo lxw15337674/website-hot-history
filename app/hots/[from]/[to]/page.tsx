@@ -51,9 +51,9 @@ export default async function HotSearchRangePage({ params, searchParams }: PageP
     notFound();
   }
 
-  // 限制查询范围（例如最多30天）
+  // 限制查询范围（例如最多365天）
   const daysDiff = toDate.diff(fromDate, 'day');
-  if (daysDiff > 30) {
+  if (daysDiff > 365) {
     notFound();
   }
 
