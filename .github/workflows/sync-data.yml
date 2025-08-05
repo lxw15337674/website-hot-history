@@ -53,3 +53,10 @@ jobs:
         if: success()
         run: |
           echo "数据同步成功完成，日期: ${{ steps.date.outputs.sync_date }}"
+      - name: and Commit
+        run:  bash ./commit.bash
+
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
