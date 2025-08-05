@@ -93,9 +93,6 @@ export default async function HotSearchRangePage({ params, searchParams }: PageP
     
     return (
       <div className="container mx-auto px-4 py-2">
-        <p className="text-gray-600 dark:text-gray-400 mb-2">
-          共找到 {results.length} 条记录
-        </p>
         <WeiboList data={results} />
       </div>
     );

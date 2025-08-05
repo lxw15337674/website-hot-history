@@ -10,6 +10,7 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio",
+    "db:create-indexes": "tsx scripts/create-indexes.ts",
     "sync-data": "tsx scripts/sync-data.ts",
     "sync-recent-data": "tsx scripts/sync-recent-data.ts"
   },
