@@ -52,7 +52,7 @@ export function SearchableWeiboPage({ initialData, from, to }: SearchableWeiboPa
 
       {!loading && data.length === 0 && searchValue && (
         <div className="text-center py-8 text-muted-foreground">
-          <p>未找到包含 "{searchValue}" 的热搜内容</p>
+          <p>未找到包含 &quot;{searchValue}&quot; 的热搜内容</p>
           <p className="text-sm mt-2">尝试使用其他关键词或清空搜索条件</p>
         </div>
       )}
@@ -61,7 +61,7 @@ export function SearchableWeiboPage({ initialData, from, to }: SearchableWeiboPa
         <>
           {searchValue && (
             <div className="mb-4 text-sm text-muted-foreground">
-              找到 {data.length} 条包含 "{searchValue}" 的结果
+              找到 {data.length} 条包含 &quot;{searchValue}&quot; 的结果
             </div>
           )}
           <WeiboList data={data} searchKeyword={searchValue} />
