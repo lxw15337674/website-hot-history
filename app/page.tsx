@@ -17,9 +17,8 @@ interface SavedWeibo {
 
 async function getLatestHots(): Promise<SavedWeibo[]> {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
     const res = await fetch(
-      `${baseUrl}/api/weibo-hot-history/latest`,
+      `/api/weibo-hot-history/latest`,
       { next: { revalidate: 300 } } // 5分钟缓存
     );
     if (!res.ok) {
@@ -38,36 +37,11 @@ export default async function Page() {
   const todayDate = dayjs().format('YYYY-MM-DD');
   const todayFormatted = dayjs().format('YYYY年MM月DD日');
 
-  // 结构化数据
-  const structuredData = {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "name": "微博热搜历史归档",
-    "description": "提供每日微博热搜榜单的历史记录查询，追踪热点事件和话题趋势。",
-    "url": process.env.NEXT_PUBLIC_BASE_URL || 'https://weibo-trending-hot-history.vercel.app',
-    "mainEntity": {
-      "@type": "ItemList",
-      "name": `${todayFormatted}微博热搜`,
-      "numberOfItems": latestHots.length,
-      "itemListElement": latestHots.slice(0, 5).map((item, index) => ({
-        "@type": "ListItem",
-        "position": index + 1,
-        "item": {
-          "@type": "Article",
-          "name": item.title,
-          "description": item.description || "微博热搜话题"
-        }
-      }))
-    }
-  };
-
+  
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(structuredData)
-        }}
       />
       <main className="container mx-auto px-4 py-8 max-w-4xl">
         <div className="text-center mb-8">

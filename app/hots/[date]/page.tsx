@@ -1,14 +1,11 @@
-import Link from 'next/link';
 import dayjs from 'dayjs';
 import { Badge } from '@/components/ui/badge';
-import { Menubar, MenubarMenu, MenubarTrigger } from '@/components/ui/menubar';
 import {
   Card,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { DatePicker } from '@/components/DayPicker';
 import { numberWithUnit } from '@/public/src/lib/utils';
 
 interface HotsProps {
@@ -30,9 +27,8 @@ interface SavedWeibo {
 
 async function getData(date: string): Promise<SavedWeibo[]> {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
     const res = await fetch(
-      `${baseUrl}/api/weibo-hot-history/${date}`,
+      `/api/weibo-hot-history/${date}`,
       {
         next: { revalidate: 60 }
       }
@@ -60,34 +56,6 @@ export default async function Hots({ params, searchParams }: HotsProps) {
     <main className="p-5 lg:p-0 lg:pt-5">
         <div className="mx-auto max-w-[980px]">
           <h1 className="sr-only">{formattedDate}微博热搜榜单</h1>
-          <Menubar className="flex justify-between">
-            <MenubarMenu>
-              <Link
-                href={`/hots/${dayjs(date)
-                  .subtract(1, 'day')
-                  .format('YYYY-MM-DD')}?sort=${sort}`}
-              >
-                <MenubarTrigger
-                  className="cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                >前一天</MenubarTrigger>
-              </Link>
-            </MenubarMenu>
-            <MenubarMenu>
-              <DatePicker value={date} sort={sort} />
-            </MenubarMenu>
-            <MenubarMenu >
-              <Link
-                href={`/hots/${dayjs(date).add(1, 'day').format('YYYY-MM-DD')}?sort=${sort}`}
-              >
-                <MenubarTrigger
-                  className="cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                  disabled={dayjs(date).isAfter(dayjs().subtract(1, 'day'))}
-                >
-                  后一天
-                </MenubarTrigger>
-              </Link>
-            </MenubarMenu>
-          </Menubar>
         </div>
 
         <div className="mx-auto flex max-w-[980px] flex-col gap-2 py-4">
