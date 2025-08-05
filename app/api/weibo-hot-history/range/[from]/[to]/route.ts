@@ -14,6 +14,8 @@ export async function GET(
 ) {
   try {
     const { from, to } = await params;
+    const { searchParams } = new URL(request.url);
+    const sort = searchParams.get('sort') || 'hot';
     
     // 验证日期格式
     if (!dayjs(from, 'YYYY-MM-DD', true).isValid()) {
@@ -58,6 +60,22 @@ export async function GET(
     const startOfRangeStr = fromDate.startOf('day').toISOString();
     const endOfRangeStr = toDate.endOf('day').toISOString();
 
+    // 根据排序参数确定排序字段
+    let orderByClause;
+    switch (sort) {
+      case 'readCount':
+        orderByClause = desc(weiboHotHistory.readCount);
+        break;
+      case 'discussCount':
+        orderByClause = desc(weiboHotHistory.discussCount);
+        break;
+      case 'origin':
+        orderByClause = desc(weiboHotHistory.origin);
+        break;
+      default:
+        orderByClause = desc(weiboHotHistory.hot);
+    }
+
     // 从数据库查询数据
     const results = await db
       .select({
@@ -70,7 +88,6 @@ export async function GET(
         readCount: weiboHotHistory.readCount,
         discussCount: weiboHotHistory.discussCount,
         origin: weiboHotHistory.origin,
-        date: weiboHotHistory.createdAt, // 添加日期字段
       })
       .from(weiboHotHistory)
       .where(
@@ -79,7 +96,7 @@ export async function GET(
           lte(weiboHotHistory.createdAt, endOfRangeStr)
         )
       )
-      .orderBy(desc(weiboHotHistory.createdAt), desc(weiboHotHistory.hot))
+      .orderBy(orderByClause)
       .limit(500); // 限制返回数量
 
     // 设置缓存头

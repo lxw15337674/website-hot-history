@@ -1,8 +1,5 @@
 import { notFound } from 'next/navigation';
 import dayjs from 'dayjs';
-import { db } from '../../../../src/db/index';
-import { weiboHotHistory } from '../../../../db/schema';
-import { desc, gte, lte, and } from 'drizzle-orm';
 import { SavedWeibo } from '../../../../type';
 import { Metadata } from 'next';
 import { WeiboList } from '../../../../src/components/WeiboList';
@@ -68,64 +65,42 @@ export default async function HotSearchRangePage({ params, searchParams }: PageP
     notFound();
   }
 
-  // 计算日期范围
-  const startOfRange = fromDate.startOf('day').toISOString();
-  const endOfRange = toDate.endOf('day').toISOString();
-
-  // 从数据库查询数据
-  let orderByClause;
-  switch (sort) {
-    case 'readCount':
-      orderByClause = desc(weiboHotHistory.readCount);
-      break;
-    case 'discussCount':
-      orderByClause = desc(weiboHotHistory.discussCount);
-      break;
-    case 'origin':
-      orderByClause = desc(weiboHotHistory.origin);
-      break;
-    default:
-      orderByClause = desc(weiboHotHistory.hot);
-  }
-
-  const results = await db
-    .select({
-      title: weiboHotHistory.title,
-      description: weiboHotHistory.description,
-      category: weiboHotHistory.category,
-      url: weiboHotHistory.url,
-      hot: weiboHotHistory.hot,
-      ads: weiboHotHistory.ads,
-      readCount: weiboHotHistory.readCount,
-      discussCount: weiboHotHistory.discussCount,
-      origin: weiboHotHistory.origin,
-    })
-    .from(weiboHotHistory)
-    .where(
-      and(
-        gte(weiboHotHistory.createdAt, startOfRange),
-        lte(weiboHotHistory.createdAt, endOfRange)
-      )
-    )
-    .orderBy(orderByClause)
-    .limit(500);
-
-  if (results.length === 0) {
+  // 调用内部 API 获取数据
+  const baseUrl = process.env.VERCEL_URL 
+    ? `https://${process.env.VERCEL_URL}` 
+    : 'http://localhost:3000';
+  
+  const apiUrl = `${baseUrl}/api/weibo-hot-history/range/${from}/${to}?sort=${sort}`;
+  
+  try {
+    const response = await fetch(apiUrl, {
+      cache: 'force-cache',
+      next: { revalidate: 300 } // 5分钟缓存
+    });
+    
+    if (!response.ok) {
+      if (response.status === 404) {
+        notFound();
+      }
+      throw new Error(`API request failed: ${response.status}`);
+    }
+    
+    const results: SavedWeibo[] = await response.json();
+    
+    if (results.length === 0) {
+      notFound();
+    }
+    
+    return (
+      <div className="container mx-auto px-4 py-2">
+        <p className="text-gray-600 dark:text-gray-400 mb-2">
+          共找到 {results.length} 条记录
+        </p>
+        <WeiboList data={results} />
+      </div>
+    );
+  } catch (error) {
+    console.error('Failed to fetch data:', error);
     notFound();
   }
-
-  const fromFormatted = fromDate.format('YYYY年MM月DD日');
-  const toFormatted = toDate.format('YYYY年MM月DD日');
-
-  return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">
-        {fromFormatted} 至 {toFormatted} 微博热搜
-      </h1>
-      <p className="text-gray-600 dark:text-gray-400 mb-6">
-        共找到 {results.length} 条记录
-      </p>
-      <WeiboList data={results as SavedWeibo[]} />
-    </div>
-  );
 }
