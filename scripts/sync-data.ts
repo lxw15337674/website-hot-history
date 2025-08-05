@@ -2,6 +2,7 @@ import 'dotenv/config';
 import dayjs from 'dayjs';
 import { db } from '../src/db/index';
 import { weiboHotHistory } from '../db/schema';
+import { eq, and, gte, lt } from 'drizzle-orm';
 
 interface GitHubWeibo {
   title: string;
@@ -43,20 +44,34 @@ async function syncDataForDate(date: string) {
     return 0;
   }
   
-  // 转换数据格式
-  const dbData = data.map(item => ({
-    title: item.title,
-    category: item.category || null,
-    url: item.url,
-    hot: item.hot,
-    ads: item.ads,
-    readCount: item.readCount || 0,
-    discussCount: item.discussCount || 0,
-    origin: item.origin || 0,
-    createdAt: dayjs(date).toISOString() // 使用日期作为创建时间
-  }));
-  
   try {
+    // 先删除指定日期的现有数据
+    const startOfDay = dayjs(date).startOf('day').toISOString();
+    const endOfDay = dayjs(date).endOf('day').toISOString();
+    
+    const deleteResult = await db.delete(weiboHotHistory)
+      .where(
+        and(
+          gte(weiboHotHistory.createdAt, startOfDay),
+          lt(weiboHotHistory.createdAt, endOfDay)
+        )
+      );
+    
+    console.log(`Deleted existing records for ${date}`);
+    
+    // 转换数据格式
+    const dbData = data.map(item => ({
+      title: item.title,
+      category: item.category || null,
+      url: item.url,
+      hot: item.hot,
+      ads: item.ads,
+      readCount: item.readCount || 0,
+      discussCount: item.discussCount || 0,
+      origin: item.origin || 0,
+      createdAt: dayjs(date).toISOString() // 使用日期作为创建时间
+    }));
+    
     // 使用Drizzle批量插入数据
     const result = await db.insert(weiboHotHistory).values(dbData);
     
