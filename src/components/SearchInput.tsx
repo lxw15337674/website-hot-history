@@ -19,24 +19,18 @@ export function SearchInput({
   className
 }: SearchInputProps) {
   const [localValue, setLocalValue] = React.useState(value)
-  const timeoutRef = React.useRef<NodeJS.Timeout>()
 
-  // 防抖处理
-  React.useEffect(() => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current)
-    }
-
-    timeoutRef.current = setTimeout(() => {
+  // 处理回车键
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
       onChange(localValue)
-    }, 300)
-
-    return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current)
-      }
     }
-  }, [localValue, onChange])
+  }
+
+  // 处理失焦
+  const handleBlur = () => {
+    onChange(localValue)
+  }
 
   // 同步外部value变化
   React.useEffect(() => {
@@ -52,6 +46,8 @@ export function SearchInput({
         placeholder={placeholder}
         value={localValue}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLocalValue(e.target.value)}
+        onKeyDown={handleKeyDown}
+        onBlur={handleBlur}
         className="pl-10"
       />
     </div>

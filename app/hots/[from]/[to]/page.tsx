@@ -44,9 +44,15 @@ export default async function HotSearchRangePage({ params, searchParams }: PageP
     notFound();
   }
 
-  // 验证日期范围
-  const fromDate = dayjs(from);
-  const toDate = dayjs(to);
+
+  // 如果有搜索关键词，扩展时间范围到全部数据
+  let actualFrom = from;
+  let actualTo = to;
+
+  if (keyword) {
+    actualFrom = '2024-05-20'; // 数据开始日期
+    actualTo = dayjs().format('YYYY-MM-DD'); // 今天
+  }
 
   // 调用内部 API 获取数据
   const headersList = await headers();
@@ -54,7 +60,7 @@ export default async function HotSearchRangePage({ params, searchParams }: PageP
   const protocol = headersList.get('x-forwarded-proto') || 'http';
   const baseUrl = `${protocol}://${host}`;
   
-  const apiUrl = `${baseUrl}/api/weibo-hot-history/range/${from}/${to}?sort=${sort}${keyword ? `&keyword=${keyword}` : ''}`;
+  const apiUrl = `${baseUrl}/api/weibo-hot-history/range/${actualFrom}/${actualTo}?sort=${sort}${keyword ? `&keyword=${keyword}` : ''}`;
   
   try {
     const response = await fetch(apiUrl, {
