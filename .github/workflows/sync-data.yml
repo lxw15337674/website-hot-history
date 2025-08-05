@@ -42,10 +42,10 @@ jobs:
       
       # 安装依赖
       - name: Install dependencies
-         run: pnpm install --frozen-lockfile
-         env:
-           TURSO_DATABASE_URL: ${{ secrets.TURSO_DATABASE_URL }}
-           TURSO_AUTH_TOKEN: ${{ secrets.TURSO_AUTH_TOKEN }}
+        run: pnpm install --frozen-lockfile
+        env:
+          TURSO_DATABASE_URL: ${{ secrets.TURSO_DATABASE_URL }}
+          TURSO_AUTH_TOKEN: ${{ secrets.TURSO_AUTH_TOKEN }}
       
       # 计算同步日期
       - name: Calculate sync date
@@ -63,21 +63,21 @@ jobs:
       # 执行数据同步
       - name: Sync data
         run: |
-           echo "开始同步 ${{ steps.date.outputs.sync_date }} 的数据..."
-           pnpm run sync-data ${{ steps.date.outputs.sync_date }} ${{ steps.date.outputs.sync_date }}
-         env:
-           TURSO_DATABASE_URL: ${{ secrets.TURSO_DATABASE_URL }}
-           TURSO_AUTH_TOKEN: ${{ secrets.TURSO_AUTH_TOKEN }}
+          echo "开始同步 ${{ steps.date.outputs.sync_date }} 的数据..."
+          pnpm run sync-data ${{ steps.date.outputs.sync_date }} ${{ steps.date.outputs.sync_date }}
+        env:
+          TURSO_DATABASE_URL: ${{ secrets.TURSO_DATABASE_URL }}
+          TURSO_AUTH_TOKEN: ${{ secrets.TURSO_AUTH_TOKEN }}
       
       # 验证同步结果
       - name: Verify sync result
         run: |
-           echo "数据同步完成，验证结果..."
-           # 这里可以添加数据验证逻辑
-           pnpm run sync-recent-data
-         env:
-           TURSO_DATABASE_URL: ${{ secrets.TURSO_DATABASE_URL }}
-           TURSO_AUTH_TOKEN: ${{ secrets.TURSO_AUTH_TOKEN }}
+          echo "数据同步完成，验证结果..."
+          # 这里可以添加数据验证逻辑
+          pnpm run sync-recent-data
+        env:
+          TURSO_DATABASE_URL: ${{ secrets.TURSO_DATABASE_URL }}
+          TURSO_AUTH_TOKEN: ${{ secrets.TURSO_AUTH_TOKEN }}
       
       # 发送通知（可选）
       - name: Send notification on failure
