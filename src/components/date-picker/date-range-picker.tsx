@@ -191,16 +191,6 @@ export default function DateRangePicker({
   const [tempSelectedPreset, setTempSelectedPreset] = React.useState<string | null>(initialPreset)
   const [open, setOpen] = React.useState(false)
 
-  // 监听URL变化，更新日期范围
-  React.useEffect(() => {
-    const newDateRange = getInitialDateRange()
-    const newPreset = getMatchingPreset(newDateRange)
-    
-    setDate(newDateRange)
-    setTempDate(newDateRange)
-    setSelectedPreset(newPreset)
-    setTempSelectedPreset(newPreset)
-  }, [pathname, getInitialDateRange, getMatchingPreset])
 
   const handleDateSelect = (range: DateRange | undefined) => {
     setTempDate(range)
