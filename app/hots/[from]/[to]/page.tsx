@@ -1,12 +1,13 @@
 import { notFound } from 'next/navigation';
+import { headers } from 'next/headers';
 import dayjs from 'dayjs';
 import { SavedWeibo } from '../../../../type';
 import { Metadata } from 'next';
-import { WeiboList } from '../../../../src/components/WeiboList';
+import { SearchableWeiboPage } from '../../../../src/components/SearchableWeiboPage';
 
 interface PageProps {
   params: Promise<{ from: string; to: string }>;
-  searchParams: Promise<{ sort?: string }>;
+  searchParams: Promise<{ sort?: string; keyword?: string }>;
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
@@ -36,7 +37,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function HotSearchRangePage({ params, searchParams }: PageProps) {
   const { from, to } = await params;
-  const { sort = 'hot' } = await searchParams;
+  const { sort = 'hot', keyword = '' } = await searchParams;
   
   // 验证日期格式
   if (!dayjs(from, 'YYYY-MM-DD', true).isValid() || !dayjs(to, 'YYYY-MM-DD', true).isValid()) {
@@ -46,31 +47,14 @@ export default async function HotSearchRangePage({ params, searchParams }: PageP
   // 验证日期范围
   const fromDate = dayjs(from);
   const toDate = dayjs(to);
-  
-  if (fromDate.isAfter(toDate)) {
-    notFound();
-  }
-
-  // 限制查询范围（例如最多365天）
-  const daysDiff = toDate.diff(fromDate, 'day');
-  if (daysDiff > 365) {
-    notFound();
-  }
-
-  // 检查日期是否在有效范围内
-  const minDate = dayjs('2024-05-20');
-  const maxDate = dayjs();
-  
-  if (fromDate.isBefore(minDate) || toDate.isAfter(maxDate)) {
-    notFound();
-  }
 
   // 调用内部 API 获取数据
-  const baseUrl = process.env.VERCEL_URL 
-    ? `https://${process.env.VERCEL_URL}` 
-    : 'http://localhost:3000';
+  const headersList = await headers();
+  const host = headersList.get('host') || 'localhost:3000';
+  const protocol = headersList.get('x-forwarded-proto') || 'http';
+  const baseUrl = `${protocol}://${host}`;
   
-  const apiUrl = `${baseUrl}/api/weibo-hot-history/range/${from}/${to}?sort=${sort}`;
+  const apiUrl = `${baseUrl}/api/weibo-hot-history/range/${from}/${to}?sort=${sort}${keyword ? `&keyword=${keyword}` : ''}`;
   
   try {
     const response = await fetch(apiUrl, {
@@ -86,15 +70,13 @@ export default async function HotSearchRangePage({ params, searchParams }: PageP
     }
     
     const results: SavedWeibo[] = await response.json();
-    
-    if (results.length === 0) {
-      notFound();
-    }
-    
+
     return (
-      <div className="container mx-auto px-4 py-2">
-        <WeiboList data={results} />
-      </div>
+      <SearchableWeiboPage
+        initialData={results}
+        from={from}
+        to={to}
+      />
     );
   } catch (error) {
     console.error('Failed to fetch data:', error);

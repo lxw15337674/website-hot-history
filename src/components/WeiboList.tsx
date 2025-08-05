@@ -7,9 +7,26 @@ import dayjs from 'dayjs';
 
 interface WeiboListProps {
   data: SavedWeibo[];
+  searchKeyword?: string;
 }
 
-export function WeiboList({ data }: WeiboListProps) {
+// 高亮关键词的辅助函数
+function highlightKeyword(text: string, keyword: string) {
+  if (!keyword || !text) return text;
+  
+  const regex = new RegExp(`(${keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+  const parts = text.split(regex);
+  
+  return parts.map((part, index) => 
+    regex.test(part) ? (
+      <mark key={index} className="bg-yellow-200 dark:bg-yellow-800 px-1 rounded">
+        {part}
+      </mark>
+    ) : part
+  );
+}
+
+export function WeiboList({ data, searchKeyword }: WeiboListProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {data.map((item, index) => (
@@ -18,7 +35,7 @@ export function WeiboList({ data }: WeiboListProps) {
             <div className="flex justify-between items-start">
               <CardTitle className="text-lg font-bold line-clamp-2">
                 <a href={item.url} target="_blank" rel="noopener noreferrer" className="hover:text-blue-500 transition-colors">
-                  {item.title}
+                  {searchKeyword ? highlightKeyword(item.title, searchKeyword) : item.title}
                 </a>
               </CardTitle>
               <div className="flex flex-shrink-0 space-x-1">
@@ -39,7 +56,7 @@ export function WeiboList({ data }: WeiboListProps) {
             </div>
             {item.description && (
               <CardDescription className="mt-2 line-clamp-2">
-                {item.description}
+                {searchKeyword ? highlightKeyword(item.description, searchKeyword) : item.description}
               </CardDescription>
             )}
           </CardHeader>

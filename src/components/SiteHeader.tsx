@@ -10,10 +10,11 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { ModeToggle } from "./ModeToggle";
-import { Suspense } from "react";
+import { Suspense, useState, useCallback } from "react";
 import { Github } from "lucide-react";
 import { Button } from "./ui/button";
 import { DateSelector } from "./DateSelector";
+import { SearchInput } from "./SearchInput";
 import dayjs from "dayjs";
 
 const sortConfig = [
@@ -38,12 +39,25 @@ export function SiteHeaderContent() {
     const pathname = usePathname()
     const router = useRouter();
     const params = useSearchParams();
+    const [searchValue, setSearchValue] = useState(params.get('keyword') || '');
     
     // 从路径中提取日期，例如 /hots/2024-01-01 -> 2024-01-01
     const dateMatch = pathname.match(/\/hots\/([0-9]{4}-[0-9]{2}-[0-9]{2})/);
     const currentDate = dateMatch ? dateMatch[1] : dayjs().format('YYYY-MM-DD');
     const currentSort = params.get('sort') || 'hot';
     
+    const handleSearchChange = useCallback((keyword: string) => {
+        setSearchValue(keyword);
+        const newParams = new URLSearchParams(params.toString());
+        if (keyword) {
+            newParams.set('keyword', keyword);
+        } else {
+            newParams.delete('keyword');
+        }
+        const newUrl = `${pathname}?${newParams.toString()}`;
+        router.replace(newUrl);
+    }, [pathname, params, router]);
+
     return (
         <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
             <div className="container flex h-14 max-w-screen-2xl items-center ">
@@ -67,7 +81,13 @@ export function SiteHeaderContent() {
                             }
                         </SelectContent>
                     </Select>
-                        <DateSelector />
+                    <DateSelector />
+                    <SearchInput
+                        value={searchValue}
+                        onChange={handleSearchChange}
+                        placeholder="搜索热搜标题或描述..."
+                        className="w-64"
+                    />
                 </div>
                 <div className="flex flex-1 items-center  space-x-2 justify-end">
                     <nav className="flex items-center space-x-4">
