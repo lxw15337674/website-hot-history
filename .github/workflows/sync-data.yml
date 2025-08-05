@@ -21,18 +21,16 @@ env:
 jobs:
   sync-data:
     runs-on: ubuntu-latest
-    
+    env:
+      TZ: Asia/Shanghai  
     steps:
-      # 检出代码
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      
-      # 设置Node.js环境
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Checkout Git Source
+        uses: actions/checkout@v3 # Updated to v3
+
+      - name: Use Node.js
+        uses: actions/setup-node@v3
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: "20" # Updated to Node.js 20
       
       # 安装pnpm
       - name: Install pnpm
@@ -41,49 +39,15 @@ jobs:
       # 安装依赖
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-        env:
-          TURSO_DATABASE_URL: ${{ secrets.TURSO_DATABASE_URL }}
-          TURSO_AUTH_TOKEN: ${{ secrets.TURSO_AUTH_TOKEN }}
-      
-      # 计算同步日期
-      - name: Calculate sync date
-        id: date
-        run: |
-          if [ -n "${{ github.event.inputs.date }}" ]; then
-            SYNC_DATE="${{ github.event.inputs.date }}"
-          else
-            # 计算前一天日期（考虑UTC时间）
-            SYNC_DATE=$(date -d "yesterday" +%Y-%m-%d)
-          fi
-          echo "sync_date=$SYNC_DATE" >> $GITHUB_OUTPUT
-          echo "将同步日期: $SYNC_DATE"
       
       # 执行数据同步
       - name: Sync data
         run: |
           echo "开始同步 ${{ steps.date.outputs.sync_date }} 的数据..."
-          pnpm run sync-data ${{ steps.date.outputs.sync_date }} ${{ steps.date.outputs.sync_date }}
+          pnpm run sync-data 
         env:
           TURSO_DATABASE_URL: ${{ secrets.TURSO_DATABASE_URL }}
-          TURSO_AUTH_TOKEN: ${{ secrets.TURSO_AUTH_TOKEN }}
-      
-      # 验证同步结果
-      - name: Verify sync result
-        run: |
-          echo "数据同步完成，验证结果..."
-          # 这里可以添加数据验证逻辑
-          pnpm run sync-recent-data
-        env:
-          TURSO_DATABASE_URL: ${{ secrets.TURSO_DATABASE_URL }}
-          TURSO_AUTH_TOKEN: ${{ secrets.TURSO_AUTH_TOKEN }}
-      
-      # 发送通知（可选）
-      - name: Send notification on failure
-        if: failure()
-        run: |
-          echo "数据同步失败，日期: ${{ steps.date.outputs.sync_date }}"
-          echo "请检查日志并手动处理"
-          # 这里可以集成Slack、邮件等通知服务
+          TURSO_AUTH_TOKEN: ${{ secrets.TURSO_AUTH_TOKEN }}   
       
       - name: Send success notification
         if: success()
