@@ -1,0 +1,58 @@
+name: Daily Data Sync
+
+# 触发条件
+on:
+  # 支持手动触发
+  workflow_dispatch:
+    inputs:
+      date:
+        description: '指定同步日期 (YYYY-MM-DD)，留空则同步前一天'
+        required: false
+        type: string
+
+# 环境变量
+env:
+  NODE_VERSION: '18'
+
+jobs:
+  sync-data:
+    runs-on: ubuntu-latest
+    env:
+      TZ: Asia/Shanghai  
+    steps:
+      - name: Checkout Git Source
+        uses: actions/checkout@v3 # Updated to v3
+
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20" # Updated to Node.js 20
+      
+      # 安装pnpm
+      - name: Install pnpm
+        run: npm install -g pnpm
+      
+      # 安装依赖
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      
+      # 执行数据同步
+      - name: Sync data
+        run: |
+          echo "开始同步 ${{ steps.date.outputs.sync_date }} 的数据..."
+          pnpm run sync-recent-data
+        env:
+          TURSO_DATABASE_URL: ${{ secrets.TURSO_DATABASE_URL }}
+          TURSO_AUTH_TOKEN: ${{ secrets.TURSO_AUTH_TOKEN }}   
+      
+      - name: Send success notification
+        if: success()
+        run: |
+          echo "数据同步成功完成，日期: ${{ steps.date.outputs.sync_date }}"
+      - name: and Commit
+        run:  bash ./commit.bash
+
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
