@@ -15,9 +15,6 @@ on:
         required: false
         type: string
 
-# 环境变量
-env:
-  NODE_VERSION: '18'
 
 jobs:
   sync-data:

@@ -4,15 +4,7 @@ name:  Recent Data Sync
 on:
   # 支持手动触发
   workflow_dispatch:
-    inputs:
-      date:
-        description: '指定同步日期 (YYYY-MM-DD)，留空则同步前一天'
-        required: false
-        type: string
 
-# 环境变量
-env:
-  NODE_VERSION: '18'
 
 jobs:
   sync-data:
