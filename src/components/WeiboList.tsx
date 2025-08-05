@@ -44,8 +44,8 @@ export function WeiboList({ data }: WeiboListProps) {
             )}
           </CardHeader>
 
-          <CardFooter className="flex flex-col space-y-2 text-sm text-gray-500 dark:text-gray-400 pt-4 mt-auto">
-            <div className="flex  space-x-2">
+          <CardFooter className="flex flex-col items-start space-y-2 text-sm text-gray-500 dark:text-gray-400 pt-4 mt-auto">
+            <div className="flex items-start space-x-2">
               <span>热度: {numberWithUnit(item.hot)}</span>
               {item.readCount !== undefined && item.readCount > 0 && (
                 <span>阅读: {numberWithUnit(item.readCount)}</span>
