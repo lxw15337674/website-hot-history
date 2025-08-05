@@ -1,0 +1,61 @@
+
+import { SavedWeibo } from '../../type';
+import { Badge } from './ui/badge';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './ui/card';
+import { numberWithUnit } from '../lib/utils';
+
+interface WeiboListProps {
+  data: SavedWeibo[];
+}
+
+export function WeiboList({ data }: WeiboListProps) {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {data.map((item, index) => (
+        <Card key={`${item.title}-${index}`} className={`overflow-hidden flex flex-col ${item.ads ? 'border-yellow-500 dark:border-yellow-500' : ''}`}>
+          <CardHeader className="pb-2">
+            <div className="flex justify-between items-start">
+              <CardTitle className="text-lg font-bold line-clamp-2">
+                <a href={item.url} target="_blank" rel="noopener noreferrer" className="hover:text-blue-500 transition-colors">
+                  {item.title}
+                </a>
+              </CardTitle>
+              <div className="flex flex-shrink-0 space-x-1">
+                {item.ads && (
+                  <Badge variant="outline" className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200 border-yellow-300 dark:border-yellow-700">
+                    广告
+                  </Badge>
+                )}
+                {item.category && (
+                  <Badge variant="outline">
+                    {item.category}
+                  </Badge>
+                )}
+              </div>
+            </div>
+            {item.description && (
+              <CardDescription className="mt-2 line-clamp-2">
+                {item.description}
+              </CardDescription>
+            )}
+          </CardHeader>
+
+          <CardFooter className="flex justify-between text-sm text-gray-500 dark:text-gray-400 pt-4 mt-auto">
+            <div className="flex items-center space-x-4">
+              <span>热度: {numberWithUnit(item.hot)}</span>
+              {item.readCount !== undefined && item.readCount > 0 && (
+                <span>阅读: {numberWithUnit(item.readCount)}</span>
+              )}
+              {item.discussCount !== undefined && item.discussCount > 0 && (
+                <span>讨论: {numberWithUnit(item.discussCount)}</span>
+              )}
+              {item.origin !== undefined && item.origin > 0 && (
+                <span>原创: {numberWithUnit(item.origin)}</span>
+              )}
+            </div>
+          </CardFooter>
+        </Card>
+      ))}
+    </div>
+  );
+}

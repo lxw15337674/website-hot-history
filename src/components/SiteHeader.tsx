@@ -13,7 +13,7 @@ import { ModeToggle } from "./ModeToggle";
 import { Suspense } from "react";
 import { Github } from "lucide-react";
 import { Button } from "./ui/button";
-import { DatePicker } from "./DayPicker";
+import { DateSelector } from "./DateSelector";
 import dayjs from "dayjs";
 
 const sortConfig = [
@@ -67,9 +67,9 @@ export function SiteHeaderContent() {
                             }
                         </SelectContent>
                     </Select>
-                    {/* 只在热搜页面显示DatePicker */}
+                    {/* 只在热搜页面显示DateSelector */}
                     {pathname.includes('/hots/') && (
-                        <DatePicker value={currentDate} sort={currentSort} />
+                        <DateSelector />
                     )}
                 </div>
                 <div className="flex flex-1 items-center  space-x-2 justify-end">

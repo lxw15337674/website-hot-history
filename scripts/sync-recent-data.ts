@@ -1,3 +1,4 @@
+// 同步最近数据
 import 'dotenv/config';
 import dayjs from 'dayjs';
 import { db } from '../src/db/index';
@@ -5,6 +6,7 @@ import { weiboHotHistory } from '../db/schema';
 
 interface WeiboHotItem {
   title: string;
+  description?: string;
   category?: string;
   url: string;
   hot: number;
@@ -56,6 +58,7 @@ async function syncDataForDate(date: string): Promise<number> {
     const result = await db.insert(weiboHotHistory).values(
       weiboData.data.map(item => ({
         title: item.title,
+        description: item.description || null,
         category: item.category || null,
         url: item.url,
         hot: item.hot,

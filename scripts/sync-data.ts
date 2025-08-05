@@ -1,3 +1,4 @@
+// 
 import 'dotenv/config';
 import dayjs from 'dayjs';
 import { db } from '../src/db/index';
@@ -7,7 +8,7 @@ import { eq, and, gte, lt } from 'drizzle-orm';
 interface GitHubWeibo {
   title: string;
   category: string;
-  description: string;
+  description?: string;
   url: string;
   hot: number;
   ads: boolean;
@@ -45,6 +46,7 @@ async function syncDataForDate(date: string) {
   }
   
   try {
+   
     // 先删除指定日期的现有数据
     const startOfDay = dayjs(date).startOf('day').toISOString();
     const endOfDay = dayjs(date).endOf('day').toISOString();
@@ -62,6 +64,7 @@ async function syncDataForDate(date: string) {
     // 转换数据格式
     const dbData = data.map(item => ({
       title: item.title,
+      description: item.description || null,
       category: item.category || null,
       url: item.url,
       hot: item.hot,
@@ -85,8 +88,8 @@ async function syncDataForDate(date: string) {
 
 async function main() {
   // 设置同步的日期范围
-  const startDate = process.argv[2] || dayjs().subtract(1, 'day').format('YYYY-MM-DD'); // 默认同步前一天
-  const endDate = process.argv[3] || startDate; // 如果没有指定结束日期，则只同步一天
+  const startDate = process.argv[2] || dayjs().subtract(1, 'day').format('YYYY-MM-DD'); // 默认从前一天开始
+  const endDate = process.argv[3] || dayjs().format('YYYY-MM-DD'); // 默认到当天结束，同步前一天和当天
   
   console.log(`🚀 Starting data sync from ${startDate} to ${endDate}...`);
   console.log(`📅 Current time: ${dayjs().format('YYYY-MM-DD HH:mm:ss')}`);

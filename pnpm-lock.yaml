@@ -11,15 +11,6 @@ importers:
       '@libsql/client':
         specifier: 0.15.10
         version: 0.15.10
-      '@prisma/adapter-libsql':
-        specifier: ^6.13.0
-        version: 6.13.0
-      '@prisma/client':
-        specifier: ^6.13.0
-        version: 6.13.0(prisma@6.13.0(typescript@5.9.2))(typescript@5.9.2)
-      '@prisma/extension-accelerate':
-        specifier: ^2.0.2
-        version: 2.0.2(@prisma/client@6.13.0(prisma@6.13.0(typescript@5.9.2))(typescript@5.9.2))
       '@radix-ui/react-dropdown-menu':
         specifier: ^2.1.15
         version: 2.1.15(@types/react-dom@18.3.7(@types/react@18.3.23))(@types/react@18.3.23)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -75,8 +66,8 @@ importers:
         specifier: ^18.3.1
         version: 18.3.1
       react-day-picker:
-        specifier: ^8.10.1
-        version: 8.10.1(date-fns@3.6.0)(react@18.3.1)
+        specifier: ^9.8.1
+        version: 9.8.1(react@18.3.1)
       react-dom:
         specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)
@@ -114,9 +105,6 @@ importers:
       postcss:
         specifier: ^8.5.6
         version: 8.5.6
-      prisma:
-        specifier: ^6.13.0
-        version: 6.13.0(typescript@5.9.2)
       tailwindcss:
         specifier: ^3.4.17
         version: 3.4.17
@@ -251,6 +239,9 @@ packages:
   '@babel/types@7.28.2':
     resolution: {integrity: sha512-ruv7Ae4J5dUYULmeXw1gmb7rYRz57OWCPM57pHojnLq/3Z1CK2lNSLTCVjxVk1F/TZHwOZZrOWi0ur95BbLxNQ==}
     engines: {node: '>=6.9.0'}
+
+  '@date-fns/tz@1.3.1':
+    resolution: {integrity: sha512-LnBOyuj+piItX/D5BWBSckBsuZyOt7Jg2obGNiObq7qjl1A2/8F+i4RS8/MmkSdnw6hOe6afrJLCWrUWZw5Mlw==}
 
   '@drizzle-team/brocli@0.10.2':
     resolution: {integrity: sha512-z33Il7l5dKjUgGULTqBsQBQwckHh5AbIuxhdsIxDDiZAzBOrZO6q9ogcWC65kU382AfynTfgNumVcNIjuIua6w==}
@@ -775,28 +766,12 @@ packages:
   '@libsql/client@0.15.10':
     resolution: {integrity: sha512-J9cJQwrgH92JlPBYjUGxPIH5G9z3j/V/aPnQvcmmCgjatdVb/f7bzK3yNq15Phc+gVuKMwox3toXL+58qUMylg==}
 
-  '@libsql/client@0.8.1':
-    resolution: {integrity: sha512-xGg0F4iTDFpeBZ0r4pA6icGsYa5rG6RAG+i/iLDnpCAnSuTqEWMDdPlVseiq4Z/91lWI9jvvKKiKpovqJ1kZWA==}
-
   '@libsql/core@0.15.10':
     resolution: {integrity: sha512-fAMD+GnGQNdZ9zxeNC8AiExpKnou/97GJWkiDDZbTRHj3c9dvF1y4jsRQ0WE72m/CqTdbMGyU98yL0SJ9hQVeg==}
-
-  '@libsql/core@0.8.1':
-    resolution: {integrity: sha512-u6nrj6HZMTPsgJ9EBhLzO2uhqhlHQJQmVHV+0yFLvfGf3oSP8w7TjZCNUgu1G8jHISx6KFi7bmcrdXW9lRt++A==}
-
-  '@libsql/darwin-arm64@0.3.19':
-    resolution: {integrity: sha512-rmOqsLcDI65zzxlUOoEiPJLhqmbFsZF6p4UJQ2kMqB+Kc0Rt5/A1OAdOZ/Wo8fQfJWjR1IbkbpEINFioyKf+nQ==}
-    cpu: [arm64]
-    os: [darwin]
 
   '@libsql/darwin-arm64@0.5.17':
     resolution: {integrity: sha512-WTYG2skZsUnZmfZ2v7WFj7s3/5s2PfrYBZOWBKOnxHA8g4XCDc/4bFDaqob9Q2e88+GC7cWeJ8VNkVBFpD2Xxg==}
     cpu: [arm64]
-    os: [darwin]
-
-  '@libsql/darwin-x64@0.3.19':
-    resolution: {integrity: sha512-q9O55B646zU+644SMmOQL3FIfpmEvdWpRpzubwFc2trsa+zoBlSkHuzU9v/C+UNoPHQVRMP7KQctJ455I/h/xw==}
-    cpu: [x64]
     os: [darwin]
 
   '@libsql/darwin-x64@0.5.17':
@@ -804,15 +779,8 @@ packages:
     cpu: [x64]
     os: [darwin]
 
-  '@libsql/hrana-client@0.6.2':
-    resolution: {integrity: sha512-MWxgD7mXLNf9FXXiM0bc90wCjZSpErWKr5mGza7ERy2FJNNMXd7JIOv+DepBA1FQTIfI8TFO4/QDYgaQC0goNw==}
-
   '@libsql/hrana-client@0.7.0':
     resolution: {integrity: sha512-OF8fFQSkbL7vJY9rfuegK1R7sPgQ6kFMkDamiEccNUvieQ+3urzfDFI616oPl8V7T9zRmnTkSjMOImYCAVRVuw==}
-
-  '@libsql/isomorphic-fetch@0.2.5':
-    resolution: {integrity: sha512-8s/B2TClEHms2yb+JGpsVRTPBfy1ih/Pq6h6gvyaNcYnMVJvgQRY7wAa8U2nD0dppbCuDU5evTNMEhrQ17ZKKg==}
-    engines: {node: '>=18.0.0'}
 
   '@libsql/isomorphic-fetch@0.3.1':
     resolution: {integrity: sha512-6kK3SUK5Uu56zPq/Las620n5aS9xJq+jMBcNSOmjhNf/MUvdyji4vrMTqD7ptY7/4/CAVEAYDeotUz60LNQHtw==}
@@ -831,18 +799,8 @@ packages:
     cpu: [arm]
     os: [linux]
 
-  '@libsql/linux-arm64-gnu@0.3.19':
-    resolution: {integrity: sha512-mgeAUU1oqqh57k7I3cQyU6Trpdsdt607eFyEmH5QO7dv303ti+LjUvh1pp21QWV6WX7wZyjeJV1/VzEImB+jRg==}
-    cpu: [arm64]
-    os: [linux]
-
   '@libsql/linux-arm64-gnu@0.5.17':
     resolution: {integrity: sha512-L8jnaN01TxjBJlDuDTX2W2BKzBkAOhcnKfCOf3xzvvygblxnDOK0whkYwIXeTfwtd/rr4jN/d6dZD/bcHiDxEQ==}
-    cpu: [arm64]
-    os: [linux]
-
-  '@libsql/linux-arm64-musl@0.3.19':
-    resolution: {integrity: sha512-VEZtxghyK6zwGzU9PHohvNxthruSxBEnRrX7BSL5jQ62tN4n2JNepJ6SdzXp70pdzTfwroOj/eMwiPt94gkVRg==}
     cpu: [arm64]
     os: [linux]
 
@@ -851,18 +809,8 @@ packages:
     cpu: [arm64]
     os: [linux]
 
-  '@libsql/linux-x64-gnu@0.3.19':
-    resolution: {integrity: sha512-2t/J7LD5w2f63wGihEO+0GxfTyYIyLGEvTFEsMO16XI5o7IS9vcSHrxsvAJs4w2Pf907uDjmc7fUfMg6L82BrQ==}
-    cpu: [x64]
-    os: [linux]
-
   '@libsql/linux-x64-gnu@0.5.17':
     resolution: {integrity: sha512-5l3XxWqUPVFrtX0xnZaXwqsXs0BFbP4w6ahRFTPSdXU50YBfUOajFznJRB6bJTMsCvraDSD0IkHhjSNfrE1CuQ==}
-    cpu: [x64]
-    os: [linux]
-
-  '@libsql/linux-x64-musl@0.3.19':
-    resolution: {integrity: sha512-BLsXyJaL8gZD8+3W2LU08lDEd9MIgGds0yPy5iNPp8tfhXx3pV/Fge2GErN0FC+nzt4DYQtjL+A9GUMglQefXQ==}
     cpu: [x64]
     os: [linux]
 
@@ -870,11 +818,6 @@ packages:
     resolution: {integrity: sha512-FvSpWlwc+dIeYIFYlsSv+UdQ/NiZWr+SstwVji+QZ//8NnvzwWQU9cgP+Vpps6Qiq4jyYQm9chJhTYOVT9Y3BA==}
     cpu: [x64]
     os: [linux]
-
-  '@libsql/win32-x64-msvc@0.3.19':
-    resolution: {integrity: sha512-ay1X9AobE4BpzG0XPw1gplyLZPGHIgJOovvW23gUrukRegiUP62uzhpRbKNogLlUOynyXeq//prHgPXiebUfWg==}
-    cpu: [x64]
-    os: [win32]
 
   '@libsql/win32-x64-msvc@0.5.17':
     resolution: {integrity: sha512-f5bGH8+3A5sn6Lrqg8FsQ09a1pYXPnKGXGTFiAYlfQXVst1tUTxDTugnuWcJYKXyzDe/T7ccxyIZXeSmPOhq8A==}
@@ -961,9 +904,6 @@ packages:
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
     engines: {node: '>=14'}
 
-  '@prisma/adapter-libsql@6.13.0':
-    resolution: {integrity: sha512-tG5HXxLVwxZBC3V5Xk9oQyDPL7bpjePfGvF9SGvZnP5Ve1BON99M6UXwkEwlgaUNRziObAkcK/NvaB1ZXc0xRQ==}
-
   '@prisma/client@6.13.0':
     resolution: {integrity: sha512-8m2+I3dQovkV8CkDMluiwEV1TxV9EXdT6xaCz39O6jYw7mkf5gwfmi+cL4LJsEPwz5tG7sreBwkRpEMJedGYUQ==}
     engines: {node: '>=18.18'}
@@ -982,20 +922,11 @@ packages:
   '@prisma/debug@6.13.0':
     resolution: {integrity: sha512-um+9pfKJW0ihmM83id9FXGi5qEbVJ0Vxi1Gm0xpYsjwUBnw6s2LdPBbrsG9QXRX46K4CLWCTNvskXBup4i9hlw==}
 
-  '@prisma/driver-adapter-utils@6.13.0':
-    resolution: {integrity: sha512-72gQS/rz0KRV1bvi37OGu5PgMAzTQplFZuTo1kSb4hK7sm0PTvl7+V4NFHdwXEUecTq/+FnF9Ts9Ac+iKPnEow==}
-
   '@prisma/engines-version@6.13.0-35.361e86d0ea4987e9f53a565309b3eed797a6bcbd':
     resolution: {integrity: sha512-MpPyKSzBX7P/ZY9odp9TSegnS/yH3CSbchQE9f0yBg3l2QyN59I6vGXcoYcqKC9VTniS1s18AMmhyr1OWavjHg==}
 
   '@prisma/engines@6.13.0':
     resolution: {integrity: sha512-D+1B79LFvtWA0KTt8ALekQ6A/glB9w10ETknH5Y9g1k2NYYQOQy93ffiuqLn3Pl6IPJG3EsK/YMROKEaq8KBrA==}
-
-  '@prisma/extension-accelerate@2.0.2':
-    resolution: {integrity: sha512-yZK6/k7uOEFpEsKoZezQS1CKDboPtBCQ0NyI70e1Un8tDiRgg80iWGyjsJmRpps2ZIut3MroHP+dyR3wVKh8lA==}
-    engines: {node: '>=18'}
-    peerDependencies:
-      '@prisma/client': '>=4.16.1'
 
   '@prisma/fetch-engine@6.13.0':
     resolution: {integrity: sha512-grmmq+4FeFKmaaytA8Ozc2+Tf3BC8xn/DVJos6LL022mfRlMZYjT3hZM0/xG7+5fO95zFG9CkDUs0m1S2rXs5Q==}
@@ -1662,9 +1593,6 @@ packages:
     resolution: {integrity: sha512-hsU18Ae8CDTR6Kgu9DYf0EbCr/a5iGL0rytQDobUcdpYOKokk8LEjVphnXkDkgpi0wYVsqrXuP0bZxJaTqdgoA==}
     engines: {node: '>= 0.4'}
 
-  async-mutex@0.5.0:
-    resolution: {integrity: sha512-1A94B18jkJ3DYq284ohPxoXbfTA5HsQ7/Mf4DEhcyLx3Bz27Rh59iScbB6EPiP+B+joue6YCxcMXSbFC1tZKwA==}
-
   autoprefixer@10.4.21:
     resolution: {integrity: sha512-O+A6LWV5LDHSJD3LjHYoNi4VLsj/Whi7k6zG12xTYaU4cQ8oxQGckXNX8cRHK5yOZ/ppVHe0ZBXGzSV9jXdVbQ==}
     engines: {node: ^10 || ^12 || >=14}
@@ -1868,8 +1796,14 @@ packages:
     resolution: {integrity: sha512-BS8PfmtDGnrgYdOonGZQdLZslWIeCGFP9tpan0hi1Co2Zr2NKADsvGYA8XxuG/4UWgJ6Cjtv+YJnB6MM69QGlQ==}
     engines: {node: '>= 0.4'}
 
+  date-fns-jalali@4.1.0-0:
+    resolution: {integrity: sha512-hTIP/z+t+qKwBDcmmsnmjWTduxCg+5KfdqWQvb2X/8C9+knYY6epN/pfxdDuyVlSVeFz0sM5eEfwIUQ70U4ckg==}
+
   date-fns@3.6.0:
     resolution: {integrity: sha512-fRHTG8g/Gif+kSh50gaGEdToemgfj74aRX3swtiouboip5JDLAyDE9F11nHMIcvOaXeOC6D7SpNhi7uFyB7Uww==}
+
+  date-fns@4.1.0:
+    resolution: {integrity: sha512-Ukq0owbQXxa/U3EGtsdVBkR1w7KOQ5gIBqdH2hkvknzZPYvBxb/aa6E8L7tmjFtkwZBu3UXBbjIgPo/Ez4xaNg==}
 
   dayjs@1.11.13:
     resolution: {integrity: sha512-oaMBel6gjolK862uaPQOVTA7q3TZhuSvuMQAAglQDOWYO9A91IrAOUJEyKVlqJlHE0vq5p5UXxzdPfMH/x6xNg==}
@@ -2686,11 +2620,6 @@ packages:
     resolution: {integrity: sha512-+bT2uH4E5LGE7h/n3evcS/sQlJXCpIp6ym8OWJ5eV6+67Dsql/LaaT7qJBAt2rzfoa/5QBGBhxDix1dMt2kQKQ==}
     engines: {node: '>= 0.8.0'}
 
-  libsql@0.3.19:
-    resolution: {integrity: sha512-Aj5cQ5uk/6fHdmeW0TiXK42FqUlwx7ytmMLPSaUQPin5HKKKuUPD62MAbN4OEweGBBI7q1BekoEN4gPUEL6MZA==}
-    cpu: [x64, arm64, wasm32]
-    os: [darwin, linux, win32]
-
   libsql@0.5.17:
     resolution: {integrity: sha512-RRlj5XQI9+Wq+/5UY8EnugSWfRmHEw4hn3DKlPrkUgZONsge1PwTtHcpStP6MSNi8ohcbsRgEHJaymA33a8cBw==}
     cpu: [x64, arm64, wasm32, arm]
@@ -3089,11 +3018,11 @@ packages:
   rc9@2.1.2:
     resolution: {integrity: sha512-btXCnMmRIBINM2LDZoEmOogIZU7Qe7zn4BpomSKZ/ykbLObuBdvG+mFq11DL6fjH1DRwHhrlgtYWG96bJiC7Cg==}
 
-  react-day-picker@8.10.1:
-    resolution: {integrity: sha512-TMx7fNbhLk15eqcMt+7Z7S2KF7mfTId/XJDjKE8f+IUcFn0l08/kI4FiYTL/0yuOLmEcbR4Fwe3GJf/NiiMnPA==}
+  react-day-picker@9.8.1:
+    resolution: {integrity: sha512-kMcLrp3PfN/asVJayVv82IjF3iLOOxuH5TNFWezX6lS/T8iVRFPTETpHl3TUSTH99IDMZLubdNPJr++rQctkEw==}
+    engines: {node: '>=18'}
     peerDependencies:
-      date-fns: ^2.28.0 || ^3.0.0
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+      react: '>=16.8.0'
 
   react-dom@18.3.1:
     resolution: {integrity: sha512-5m4nQKp+rZRb09LNH59GM4BxTh9251/ylbKIbpe7TpGxfJ+9kv6BLkLBXIjjspbgbnIBNqlI23tRnTWT0snUIw==}
@@ -3780,6 +3709,8 @@ snapshots:
       '@babel/helper-string-parser': 7.27.1
       '@babel/helper-validator-identifier': 7.27.1
 
+  '@date-fns/tz@1.3.1': {}
+
   '@drizzle-team/brocli@0.10.2': {}
 
   '@emnapi/core@1.4.5':
@@ -4146,46 +4077,15 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@libsql/client@0.8.1':
-    dependencies:
-      '@libsql/core': 0.8.1
-      '@libsql/hrana-client': 0.6.2
-      js-base64: 3.7.7
-      libsql: 0.3.19
-      promise-limit: 2.7.0
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
-
   '@libsql/core@0.15.10':
     dependencies:
       js-base64: 3.7.7
 
-  '@libsql/core@0.8.1':
-    dependencies:
-      js-base64: 3.7.7
-
-  '@libsql/darwin-arm64@0.3.19':
-    optional: true
-
   '@libsql/darwin-arm64@0.5.17':
-    optional: true
-
-  '@libsql/darwin-x64@0.3.19':
     optional: true
 
   '@libsql/darwin-x64@0.5.17':
     optional: true
-
-  '@libsql/hrana-client@0.6.2':
-    dependencies:
-      '@libsql/isomorphic-fetch': 0.2.5
-      '@libsql/isomorphic-ws': 0.1.5
-      js-base64: 3.7.7
-      node-fetch: 3.3.2
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
 
   '@libsql/hrana-client@0.7.0':
     dependencies:
@@ -4196,8 +4096,6 @@ snapshots:
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
-
-  '@libsql/isomorphic-fetch@0.2.5': {}
 
   '@libsql/isomorphic-fetch@0.3.1': {}
 
@@ -4215,31 +4113,16 @@ snapshots:
   '@libsql/linux-arm-musleabihf@0.5.17':
     optional: true
 
-  '@libsql/linux-arm64-gnu@0.3.19':
-    optional: true
-
   '@libsql/linux-arm64-gnu@0.5.17':
-    optional: true
-
-  '@libsql/linux-arm64-musl@0.3.19':
     optional: true
 
   '@libsql/linux-arm64-musl@0.5.17':
     optional: true
 
-  '@libsql/linux-x64-gnu@0.3.19':
-    optional: true
-
   '@libsql/linux-x64-gnu@0.5.17':
     optional: true
 
-  '@libsql/linux-x64-musl@0.3.19':
-    optional: true
-
   '@libsql/linux-x64-musl@0.5.17':
-    optional: true
-
-  '@libsql/win32-x64-msvc@0.3.19':
     optional: true
 
   '@libsql/win32-x64-msvc@0.5.17':
@@ -4301,19 +4184,11 @@ snapshots:
   '@pkgjs/parseargs@0.11.0':
     optional: true
 
-  '@prisma/adapter-libsql@6.13.0':
-    dependencies:
-      '@libsql/client': 0.8.1
-      '@prisma/driver-adapter-utils': 6.13.0
-      async-mutex: 0.5.0
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
-
   '@prisma/client@6.13.0(prisma@6.13.0(typescript@5.9.2))(typescript@5.9.2)':
     optionalDependencies:
       prisma: 6.13.0(typescript@5.9.2)
       typescript: 5.9.2
+    optional: true
 
   '@prisma/config@6.13.0':
     dependencies:
@@ -4323,14 +4198,13 @@ snapshots:
       read-package-up: 11.0.0
     transitivePeerDependencies:
       - magicast
+    optional: true
 
-  '@prisma/debug@6.13.0': {}
+  '@prisma/debug@6.13.0':
+    optional: true
 
-  '@prisma/driver-adapter-utils@6.13.0':
-    dependencies:
-      '@prisma/debug': 6.13.0
-
-  '@prisma/engines-version@6.13.0-35.361e86d0ea4987e9f53a565309b3eed797a6bcbd': {}
+  '@prisma/engines-version@6.13.0-35.361e86d0ea4987e9f53a565309b3eed797a6bcbd':
+    optional: true
 
   '@prisma/engines@6.13.0':
     dependencies:
@@ -4338,20 +4212,19 @@ snapshots:
       '@prisma/engines-version': 6.13.0-35.361e86d0ea4987e9f53a565309b3eed797a6bcbd
       '@prisma/fetch-engine': 6.13.0
       '@prisma/get-platform': 6.13.0
-
-  '@prisma/extension-accelerate@2.0.2(@prisma/client@6.13.0(prisma@6.13.0(typescript@5.9.2))(typescript@5.9.2))':
-    dependencies:
-      '@prisma/client': 6.13.0(prisma@6.13.0(typescript@5.9.2))(typescript@5.9.2)
+    optional: true
 
   '@prisma/fetch-engine@6.13.0':
     dependencies:
       '@prisma/debug': 6.13.0
       '@prisma/engines-version': 6.13.0-35.361e86d0ea4987e9f53a565309b3eed797a6bcbd
       '@prisma/get-platform': 6.13.0
+    optional: true
 
   '@prisma/get-platform@6.13.0':
     dependencies:
       '@prisma/debug': 6.13.0
+    optional: true
 
   '@radix-ui/number@1.1.1': {}
 
@@ -4688,7 +4561,8 @@ snapshots:
 
   '@rushstack/eslint-patch@1.12.0': {}
 
-  '@standard-schema/spec@1.0.0': {}
+  '@standard-schema/spec@1.0.0':
+    optional: true
 
   '@swc/helpers@0.5.15':
     dependencies:
@@ -4716,7 +4590,8 @@ snapshots:
     dependencies:
       undici-types: 6.21.0
 
-  '@types/normalize-package-data@2.4.4': {}
+  '@types/normalize-package-data@2.4.4':
+    optional: true
 
   '@types/prop-types@15.7.15': {}
 
@@ -5007,10 +4882,6 @@ snapshots:
 
   async-function@1.0.0: {}
 
-  async-mutex@0.5.0:
-    dependencies:
-      tslib: 2.8.1
-
   autoprefixer@10.4.21(postcss@8.5.6):
     dependencies:
       browserslist: 4.25.1
@@ -5082,6 +4953,7 @@ snapshots:
       perfect-debounce: 1.0.0
       pkg-types: 2.2.0
       rc9: 2.1.2
+    optional: true
 
   call-bind-apply-helpers@1.0.2:
     dependencies:
@@ -5128,10 +5000,12 @@ snapshots:
   chokidar@4.0.3:
     dependencies:
       readdirp: 4.1.2
+    optional: true
 
   citty@0.1.6:
     dependencies:
       consola: 3.4.2
+    optional: true
 
   class-variance-authority@0.7.1:
     dependencies:
@@ -5175,9 +5049,11 @@ snapshots:
 
   concat-map@0.0.1: {}
 
-  confbox@0.2.2: {}
+  confbox@0.2.2:
+    optional: true
 
-  consola@3.4.2: {}
+  consola@3.4.2:
+    optional: true
 
   convert-source-map@2.0.0: {}
 
@@ -5222,7 +5098,11 @@ snapshots:
       es-errors: 1.3.0
       is-data-view: 1.0.2
 
+  date-fns-jalali@4.1.0-0: {}
+
   date-fns@3.6.0: {}
+
+  date-fns@4.1.0: {}
 
   dayjs@1.11.13: {}
 
@@ -5238,7 +5118,8 @@ snapshots:
 
   deep-is@0.1.4: {}
 
-  deepmerge-ts@7.1.5: {}
+  deepmerge-ts@7.1.5:
+    optional: true
 
   defaults@1.0.4:
     dependencies:
@@ -5256,9 +5137,11 @@ snapshots:
       has-property-descriptors: 1.0.2
       object-keys: 1.1.1
 
-  defu@6.1.4: {}
+  defu@6.1.4:
+    optional: true
 
-  destr@2.0.5: {}
+  destr@2.0.5:
+    optional: true
 
   detect-libc@2.0.2: {}
 
@@ -5277,7 +5160,8 @@ snapshots:
     dependencies:
       esutils: 2.0.3
 
-  dotenv@16.6.1: {}
+  dotenv@16.6.1:
+    optional: true
 
   dotenv@17.2.1: {}
 
@@ -5308,6 +5192,7 @@ snapshots:
     dependencies:
       '@standard-schema/spec': 1.0.0
       fast-check: 3.23.2
+    optional: true
 
   electron-to-chromium@1.5.194: {}
 
@@ -5696,11 +5581,13 @@ snapshots:
       signal-exit: 3.0.7
       strip-final-newline: 3.0.0
 
-  exsolve@1.0.7: {}
+  exsolve@1.0.7:
+    optional: true
 
   fast-check@3.23.2:
     dependencies:
       pure-rand: 6.1.0
+    optional: true
 
   fast-deep-equal@3.1.3: {}
 
@@ -5745,7 +5632,8 @@ snapshots:
     dependencies:
       to-regex-range: 5.0.1
 
-  find-up-simple@1.0.1: {}
+  find-up-simple@1.0.1:
+    optional: true
 
   find-up@5.0.0:
     dependencies:
@@ -5838,6 +5726,7 @@ snapshots:
       node-fetch-native: 1.6.7
       nypm: 0.6.1
       pathe: 2.0.3
+    optional: true
 
   glob-parent@5.1.2:
     dependencies:
@@ -5894,6 +5783,7 @@ snapshots:
   hosted-git-info@7.0.2:
     dependencies:
       lru-cache: 10.4.3
+    optional: true
 
   https-proxy-agent@6.2.1:
     dependencies:
@@ -5917,7 +5807,8 @@ snapshots:
 
   imurmurhash@0.1.4: {}
 
-  index-to-position@1.1.0: {}
+  index-to-position@1.1.0:
+    optional: true
 
   inherits@2.0.4: {}
 
@@ -6076,7 +5967,8 @@ snapshots:
 
   jiti@1.21.7: {}
 
-  jiti@2.5.1: {}
+  jiti@2.5.1:
+    optional: true
 
   js-base64@3.7.7: {}
 
@@ -6131,19 +6023,6 @@ snapshots:
     dependencies:
       prelude-ls: 1.2.1
       type-check: 0.4.0
-
-  libsql@0.3.19:
-    dependencies:
-      '@neon-rs/load': 0.0.4
-      detect-libc: 2.0.2
-    optionalDependencies:
-      '@libsql/darwin-arm64': 0.3.19
-      '@libsql/darwin-x64': 0.3.19
-      '@libsql/linux-arm64-gnu': 0.3.19
-      '@libsql/linux-arm64-musl': 0.3.19
-      '@libsql/linux-x64-gnu': 0.3.19
-      '@libsql/linux-x64-musl': 0.3.19
-      '@libsql/win32-x64-msvc': 0.3.19
 
   libsql@0.5.17:
     dependencies:
@@ -6277,7 +6156,8 @@ snapshots:
 
   node-domexception@1.0.0: {}
 
-  node-fetch-native@1.6.7: {}
+  node-fetch-native@1.6.7:
+    optional: true
 
   node-fetch@3.3.2:
     dependencies:
@@ -6292,6 +6172,7 @@ snapshots:
       hosted-git-info: 7.0.2
       semver: 7.7.2
       validate-npm-package-license: 3.0.4
+    optional: true
 
   normalize-path@3.0.0: {}
 
@@ -6308,6 +6189,7 @@ snapshots:
       pathe: 2.0.3
       pkg-types: 2.2.0
       tinyexec: 1.0.1
+    optional: true
 
   object-assign@4.1.1: {}
 
@@ -6353,7 +6235,8 @@ snapshots:
       define-properties: 1.2.1
       es-object-atoms: 1.1.1
 
-  ohash@2.0.11: {}
+  ohash@2.0.11:
+    optional: true
 
   onetime@5.1.2:
     dependencies:
@@ -6416,6 +6299,7 @@ snapshots:
       '@babel/code-frame': 7.27.1
       index-to-position: 1.1.0
       type-fest: 4.41.0
+    optional: true
 
   path-browserify@1.0.1: {}
 
@@ -6434,9 +6318,11 @@ snapshots:
 
   path-type@4.0.0: {}
 
-  pathe@2.0.3: {}
+  pathe@2.0.3:
+    optional: true
 
-  perfect-debounce@1.0.0: {}
+  perfect-debounce@1.0.0:
+    optional: true
 
   picocolors@1.1.1: {}
 
@@ -6453,6 +6339,7 @@ snapshots:
       confbox: 0.2.2
       exsolve: 1.0.7
       pathe: 2.0.3
+    optional: true
 
   possible-typed-array-names@1.1.0: {}
 
@@ -6509,6 +6396,7 @@ snapshots:
       typescript: 5.9.2
     transitivePeerDependencies:
       - magicast
+    optional: true
 
   promise-limit@2.7.0: {}
 
@@ -6525,7 +6413,8 @@ snapshots:
 
   punycode@2.3.1: {}
 
-  pure-rand@6.1.0: {}
+  pure-rand@6.1.0:
+    optional: true
 
   queue-microtask@1.2.3: {}
 
@@ -6533,10 +6422,13 @@ snapshots:
     dependencies:
       defu: 6.1.4
       destr: 2.0.5
+    optional: true
 
-  react-day-picker@8.10.1(date-fns@3.6.0)(react@18.3.1):
+  react-day-picker@9.8.1(react@18.3.1):
     dependencies:
-      date-fns: 3.6.0
+      '@date-fns/tz': 1.3.1
+      date-fns: 4.1.0
+      date-fns-jalali: 4.1.0-0
       react: 18.3.1
 
   react-dom@18.3.1(react@18.3.1):
@@ -6587,6 +6479,7 @@ snapshots:
       find-up-simple: 1.0.1
       read-pkg: 9.0.1
       type-fest: 4.41.0
+    optional: true
 
   read-pkg@9.0.1:
     dependencies:
@@ -6595,6 +6488,7 @@ snapshots:
       parse-json: 8.3.0
       type-fest: 4.41.0
       unicorn-magic: 0.1.0
+    optional: true
 
   readable-stream@3.6.2:
     dependencies:
@@ -6606,7 +6500,8 @@ snapshots:
     dependencies:
       picomatch: 2.3.1
 
-  readdirp@4.1.2: {}
+  readdirp@4.1.2:
+    optional: true
 
   recast@0.23.11:
     dependencies:
@@ -6828,15 +6723,19 @@ snapshots:
     dependencies:
       spdx-expression-parse: 3.0.1
       spdx-license-ids: 3.0.21
+    optional: true
 
-  spdx-exceptions@2.5.0: {}
+  spdx-exceptions@2.5.0:
+    optional: true
 
   spdx-expression-parse@3.0.1:
     dependencies:
       spdx-exceptions: 2.5.0
       spdx-license-ids: 3.0.21
+    optional: true
 
-  spdx-license-ids@3.0.21: {}
+  spdx-license-ids@3.0.21:
+    optional: true
 
   stable-hash@0.0.5: {}
 
@@ -6995,7 +6894,8 @@ snapshots:
 
   tiny-invariant@1.3.3: {}
 
-  tinyexec@1.0.1: {}
+  tinyexec@1.0.1:
+    optional: true
 
   tinyglobby@0.2.14:
     dependencies:
@@ -7043,7 +6943,8 @@ snapshots:
     dependencies:
       prelude-ls: 1.2.1
 
-  type-fest@4.41.0: {}
+  type-fest@4.41.0:
+    optional: true
 
   typed-array-buffer@1.0.3:
     dependencies:
@@ -7089,7 +6990,8 @@ snapshots:
 
   undici-types@6.21.0: {}
 
-  unicorn-magic@0.1.0: {}
+  unicorn-magic@0.1.0:
+    optional: true
 
   universalify@2.0.1: {}
 
@@ -7148,6 +7050,7 @@ snapshots:
     dependencies:
       spdx-correct: 3.2.0
       spdx-expression-parse: 3.0.1
+    optional: true
 
   wcwidth@1.0.1:
     dependencies:
