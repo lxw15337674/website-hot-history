@@ -67,10 +67,7 @@ export function SiteHeaderContent() {
                             }
                         </SelectContent>
                     </Select>
-                    {/* 只在热搜页面显示DateSelector */}
-                    {pathname.includes('/hots/') && (
                         <DateSelector />
-                    )}
                 </div>
                 <div className="flex flex-1 items-center  space-x-2 justify-end">
                     <nav className="flex items-center space-x-4">
