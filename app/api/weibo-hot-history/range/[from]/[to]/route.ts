@@ -86,15 +86,24 @@ export async function GET(
       })
       .from(weiboHotHistory);
     
-    // 构建WHERE条件
-    const whereConditions = [
-      gte(weiboHotHistory.createdAt, startOfRangeStr),
-      lte(weiboHotHistory.createdAt, endOfRangeStr),
-      ...(keyword ? [or(
-        like(weiboHotHistory.title, `%${keyword}%`),
-        like(weiboHotHistory.description, `%${keyword}%`)
-      )] : [])
-    ];
+    // 构建WHERE条件 - 关键字搜索与日期范围互斥
+    const whereConditions = [];
+    
+    if (keyword) {
+      // 有关键字时，只搜索关键字，忽略日期范围
+      whereConditions.push(
+        or(
+          like(weiboHotHistory.title, `%${keyword}%`),
+          like(weiboHotHistory.description, `%${keyword}%`)
+        )
+      );
+    } else {
+      // 无关键字时，使用日期范围查询
+      whereConditions.push(
+        gte(weiboHotHistory.createdAt, startOfRangeStr),
+        lte(weiboHotHistory.createdAt, endOfRangeStr)
+      );
+    }
     
     const results = await queryBuilder
       .where(and(...whereConditions))

@@ -14,6 +14,8 @@ interface PageProps {
   searchParams: Promise<{ sort?: string; keyword?: string }>;
 }
 
+export const dynamic = 'force-dynamic';
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { from, to } = await params;
   
@@ -49,14 +51,9 @@ export default async function HotSearchRangePage({ params, searchParams }: PageP
   }
 
 
-  // 如果有搜索关键词，扩展时间范围到全部数据
-  let actualFrom = from;
-  let actualTo = to;
-
-  if (keyword) {
-    actualFrom = '2024-05-20'; // 数据开始日期
-    actualTo = dayjs().format('YYYY-MM-DD'); // 今天
-  }
+  // 关键字搜索与日期范围互斥：有关键字时忽略日期参数
+  const actualFrom = keyword ? '2024-05-20' : from; // 数据开始日期
+  const actualTo = keyword ? dayjs().format('YYYY-MM-DD') : to; // 今天或指定日期
 
   // 调用内部 API 获取数据
   const headersList = await headers();
