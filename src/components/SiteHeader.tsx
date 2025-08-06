@@ -40,10 +40,7 @@ export function SiteHeaderContent() {
     const router = useRouter();
     const params = useSearchParams();
     const [searchValue, setSearchValue] = useState(params.get('keyword') || '');
-    
-    // 从路径中提取日期，例如 /hots/2024-01-01 -> 2024-01-01
-    const dateMatch = pathname.match(/\/hots\/([0-9]{4}-[0-9]{2}-[0-9]{2})/);
-    const currentDate = dateMatch ? dateMatch[1] : dayjs().format('YYYY-MM-DD');
+
     const currentSort = params.get('sort') || 'hot';
     
     const handleSearchChange = useCallback((keyword: string) => {
