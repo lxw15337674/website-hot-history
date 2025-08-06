@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
 import { db } from '../../../../../../src/db/index';
 import { weiboHotHistory } from '../../../../../../db/schema';
 import { desc, gte, lte, and, or, like, sql } from 'drizzle-orm';
+
+// 启用UTC插件以确保时区一致性
+dayjs.extend(utc);
 
 interface RouteParams {
   params: Promise<{ from: string; to: string }>;
@@ -44,9 +48,9 @@ export async function GET(
       );
     }
 
-    // 计算日期范围（ISO 格式）
-    const startOfRangeStr = fromDate.startOf('day').toISOString();
-    const endOfRangeStr = toDate.endOf('day').toISOString();
+    // 计算日期范围（使用UTC确保时区一致性）
+    const startOfRangeStr = dayjs.utc(from).startOf('day').toISOString();
+    const endOfRangeStr = dayjs.utc(to).endOf('day').toISOString();
 
 
     // 根据排序参数确定排序字段

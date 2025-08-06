@@ -1,9 +1,13 @@
 // 
 import 'dotenv/config';
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
 import { db } from '../src/db/index';
 import { weiboHotHistory } from '../db/schema';
 import { eq, and, gte, lt } from 'drizzle-orm';
+
+// 启用UTC插件以确保时区一致性
+dayjs.extend(utc);
 
 interface GitHubWeibo {
   title: string;
@@ -47,9 +51,9 @@ async function syncDataForDate(date: string) {
   
   try {
    
-    // 先删除指定日期的现有数据
-    const startOfDay = dayjs(date).startOf('day').toISOString();
-    const endOfDay = dayjs(date).endOf('day').toISOString();
+    // 先删除指定日期的现有数据（使用UTC确保时区一致性）
+    const startOfDay = dayjs.utc(date).startOf('day').toISOString();
+    const endOfDay = dayjs.utc(date).endOf('day').toISOString();
     
     const deleteResult = await db.delete(weiboHotHistory)
       .where(
@@ -72,7 +76,7 @@ async function syncDataForDate(date: string) {
       readCount: item.readCount || 0,
       discussCount: item.discussCount || 0,
       origin: item.origin || 0,
-      createdAt: dayjs(date).toISOString() // 使用日期作为创建时间
+      createdAt: dayjs.utc(date).toISOString() // 使用UTC日期作为创建时间
     }));
     
     // 使用Drizzle批量插入数据

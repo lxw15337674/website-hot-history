@@ -1,8 +1,12 @@
 // 同步最近数据
 import 'dotenv/config';
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
 import { db } from '../src/db/index';
 import { weiboHotHistory } from '../db/schema';
+
+// 启用UTC插件以确保时区一致性
+dayjs.extend(utc);
 
 interface WeiboHotItem {
   title: string;
@@ -66,7 +70,7 @@ async function syncDataForDate(date: string): Promise<number> {
         readCount: Math.floor(Number(item.readCount) || 0),
         discussCount: item.discussCount || 0,
         origin: item.origin || 0,
-        createdAt: dayjs(date).toISOString() // 使用日期作为创建时间
+        createdAt: dayjs.utc(date).toISOString() // 使用UTC日期作为创建时间
       }))
     );
 
