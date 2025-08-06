@@ -4,6 +4,10 @@ import dayjs from 'dayjs';
 import { SavedWeibo } from '../../../../type';
 import { Metadata } from 'next';
 import { SearchableWeiboPage } from '../../../../src/components/SearchableWeiboPage';
+import { Menubar, MenubarMenu, MenubarTrigger } from '@radix-ui/react-menubar';
+
+import Link from 'next/link';
+import { DatePicker } from '../../../../src/components/DayPicker';
 
 interface PageProps {
   params: Promise<{ from: string; to: string }>;
@@ -78,11 +82,42 @@ export default async function HotSearchRangePage({ params, searchParams }: PageP
     const results: SavedWeibo[] = await response.json();
 
     return (
+      <>
+        <div className="container mx-auto px-4 py-2">
+          <Menubar className="flex justify-between  bg-card border rounded-lg text-sm">
+            <MenubarMenu>
+              <Link
+                href={`/hots/${dayjs(from)
+                  .subtract(1, 'day')
+                  .format('YYYY-MM-DD')}/${dayjs(from)
+                    .subtract(1, 'day')
+                    .format('YYYY-MM-DD')}${sort !== 'hot' ? `?sort=${sort}` : ''}`}
+              >
+                <MenubarTrigger
+                  className="cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed px-3 py-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
+                >前一天</MenubarTrigger>
+              </Link>
+            </MenubarMenu>
+            <MenubarMenu>
+              <Link
+                href={`/hots/${dayjs(from).add(1, 'day').format('YYYY-MM-DD')}/${dayjs(from).add(1, 'day').format('YYYY-MM-DD')}${sort !== 'hot' ? `?sort=${sort}` : ''}`}
+              >
+                <MenubarTrigger
+                  className="cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed px-3 py-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
+                  disabled={dayjs(from).isAfter(dayjs().subtract(1, 'day'))}
+                >
+                  后一天
+                </MenubarTrigger>
+              </Link>
+            </MenubarMenu>
+          </Menubar>
+        </div>
       <SearchableWeiboPage
         initialData={results}
         from={from}
         to={to}
       />
+      </>
     );
   } catch (error) {
     console.error('Failed to fetch data:', error);
