@@ -23,29 +23,35 @@ export function SearchInput({
   // 处理回车键
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
+      setLocalValue(localValue)
       onChange(localValue)
     }
   }
 
   // 处理失焦
   const handleBlur = () => {
+    setLocalValue(localValue)
     onChange(localValue)
   }
 
-  // 同步外部value变化
+  // 处理输入变化
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setLocalValue(e.target.value)
+  }
+
+  // 同步外部value变化 - 只在URL真正变化时同步
   React.useEffect(() => {
     setLocalValue(value)
   }, [value])
 
   return (
     <div className={cn("relative", className)}>
-
       <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
       <Input
         type="text"
         placeholder={placeholder}
         value={localValue}
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLocalValue(e.target.value)}
+        onChange={handleInputChange}
         onKeyDown={handleKeyDown}
         onBlur={handleBlur}
         className="pl-10"

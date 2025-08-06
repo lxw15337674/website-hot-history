@@ -4,6 +4,7 @@ import * as React from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { WeiboList } from "./WeiboList"
 import { SavedWeibo } from "../../type"
+import dayjs from "dayjs"
 
 interface SearchableWeiboPageProps {
   initialData: SavedWeibo[]
@@ -18,13 +19,22 @@ export function SearchableWeiboPage({ initialData, from, to }: SearchableWeiboPa
   const [loading, setLoading] = React.useState(false)
   const searchValue = searchParams.get('keyword') || ''
 
-  // 监听搜索参数变化
+  // 监听搜索参数变化 - 完全基于URL的状态管理
   React.useEffect(() => {
     const fetchData = async () => {
       setLoading(true)
       try {
         const sort = searchParams.get('sort') || 'hot'
-        const apiUrl = `/api/weibo-hot-history/range/${from}/${to}?sort=${sort}${searchValue ? `&keyword=${encodeURIComponent(searchValue)}` : ''}`
+        
+        // 如果有搜索关键词，扩展时间范围到全部数据
+        let actualFrom = from
+        let actualTo = to
+        if (searchValue) {
+          actualFrom = '2024-05-20' // 数据开始日期
+          actualTo = dayjs().format('YYYY-MM-DD') // 今天
+        }
+        
+        const apiUrl = `/api/weibo-hot-history/range/${actualFrom}/${actualTo}?sort=${sort}${searchValue ? `&keyword=${encodeURIComponent(searchValue)}` : ''}`
         const response = await fetch(apiUrl)
 
         if (response.ok) {

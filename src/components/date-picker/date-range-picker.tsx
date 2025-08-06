@@ -139,14 +139,14 @@ export default function DateRangePicker({
   const pathname = usePathname()
   const searchParams = useSearchParams()
 
-  // 从URL解析日期范围
-  const getInitialDateRange = React.useCallback(() => {
-    // 从路径中解析日期 (格式: /hots/range/2025-07-15/2025-07-16)
+  // 从URL解析日期范围 - 完全基于URL的状态管理
+  const getDateRangeFromURL = React.useCallback(() => {
+    // 从路径中解析日期 (格式: /hots/2024-01-01/2024-01-02)
     const pathParts = pathname.split('/')
-    if (pathParts.length >= 5 && pathParts[2] === 'range') {
+    if (pathParts.length >= 4 && pathParts[1] === 'hots') {
       try {
-        const fromStr = pathParts[3]
-        const toStr = pathParts[4]
+        const fromStr = pathParts[2]
+        const toStr = pathParts[3]
         const fromDate = parse(fromStr, 'yyyy-MM-dd', new Date())
         const toDate = parse(toStr, 'yyyy-MM-dd', new Date())
         
@@ -182,14 +182,26 @@ export default function DateRangePicker({
     return null
   }, [])
 
-  const initialDateRange = getInitialDateRange()
-  const initialPreset = getMatchingPreset(initialDateRange)
+  // 完全基于URL的状态管理
+  const dateRangeFromURL = getDateRangeFromURL()
+  const presetFromURL = getMatchingPreset(dateRangeFromURL)
 
-  const [date, setDate] = React.useState<DateRange | undefined>(initialDateRange)
-  const [tempDate, setTempDate] = React.useState<DateRange | undefined>(initialDateRange)
-  const [selectedPreset, setSelectedPreset] = React.useState<string | null>(initialPreset)
-  const [tempSelectedPreset, setTempSelectedPreset] = React.useState<string | null>(initialPreset)
+  const [date, setDate] = React.useState<DateRange | undefined>(dateRangeFromURL)
+  const [tempDate, setTempDate] = React.useState<DateRange | undefined>(dateRangeFromURL)
+  const [selectedPreset, setSelectedPreset] = React.useState<string | null>(presetFromURL)
+  const [tempSelectedPreset, setTempSelectedPreset] = React.useState<string | null>(presetFromURL)
   const [open, setOpen] = React.useState(false)
+
+  // 监听URL变化并同步状态
+  React.useEffect(() => {
+    const newDateRange = getDateRangeFromURL()
+    const newPreset = getMatchingPreset(newDateRange)
+    
+    setDate(newDateRange)
+    setTempDate(newDateRange)
+    setSelectedPreset(newPreset)
+    setTempSelectedPreset(newPreset)
+  }, [pathname, getDateRangeFromURL, getMatchingPreset])
 
 
   const handleDateSelect = (range: DateRange | undefined) => {

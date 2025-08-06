@@ -10,7 +10,7 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { ModeToggle } from "./ModeToggle";
-import { Suspense, useState, useCallback } from "react";
+import { Suspense, useCallback, useEffect } from "react";
 import { Github } from "lucide-react";
 import { Button } from "./ui/button";
 import { DateSelector } from "./DateSelector";
@@ -39,15 +39,20 @@ export function SiteHeaderContent() {
     const pathname = usePathname()
     const router = useRouter();
     const params = useSearchParams();
-    const [searchValue, setSearchValue] = useState(params.get('keyword') || '');
-
+    
+    // 完全基于URL的状态管理
+    const searchValue = params.get('keyword') || '';
     const currentSort = params.get('sort') || 'hot';
     
     const handleSearchChange = useCallback((keyword: string) => {
-        setSearchValue(keyword);
         if (keyword) {
             // 有关键字时，跳转到全部日期范围
-            router.replace(`/hots/2024-05-20/${dayjs().format('YYYY-MM-DD')}?keyword=${keyword}`);
+            const newParams = new URLSearchParams();
+            newParams.set('keyword', keyword);
+            if (currentSort !== 'hot') {
+                newParams.set('sort', currentSort);
+            }
+            router.replace(`/hots/2024-05-20/${dayjs().format('YYYY-MM-DD')}?${newParams.toString()}`);
         } else {
             // 清空关键字时，保持当前日期范围
             const newParams = new URLSearchParams(params.toString());
@@ -55,7 +60,7 @@ export function SiteHeaderContent() {
             const newUrl = `${pathname}?${newParams.toString()}`;
             router.replace(newUrl);
         }
-    }, [pathname, params, router]);
+    }, [pathname, params, router, currentSort]);
 
     return (
         <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -63,7 +68,14 @@ export function SiteHeaderContent() {
                 <div className="flex items-center space-x-4">
                     <Select value={currentSort}
                         onValueChange={(v) => {
-                            router.push(`${pathname}?sort=${v}`)
+                            const newParams = new URLSearchParams(params.toString());
+                            if (v === 'hot') {
+                                newParams.delete('sort');
+                            } else {
+                                newParams.set('sort', v);
+                            }
+                            const newUrl = `${pathname}?${newParams.toString()}`;
+                            router.push(newUrl);
                         }}>
                         <SelectTrigger className="w-[180px]">
                             <SelectValue placeholder="Select a fruit" />

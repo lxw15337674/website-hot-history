@@ -12,7 +12,7 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 
 interface DatePickerProps {
     value: string
@@ -21,6 +21,7 @@ interface DatePickerProps {
 export function DatePicker(props: DatePickerProps) {
     const date = new Date(props.value)
     const router = useRouter()
+    const searchParams = useSearchParams()
     return (
         <Popover>
             <PopoverTrigger asChild>
@@ -41,8 +42,17 @@ export function DatePicker(props: DatePickerProps) {
                     selected={date}
                     onSelect={(date) => {
                         if (date) {
-                            // 跳转到新的 URL，清空关键字参数
-                            router.push(`/hots/${format(date, 'yyyy-MM-dd')}?sort=${props.sort}`)
+                            // 跳转到新的 URL，清空关键字参数，保留其他参数
+                            const newParams = new URLSearchParams(searchParams.toString())
+                            newParams.delete('keyword') // 清空关键字
+                            if (props.sort === 'hot') {
+                                newParams.delete('sort')
+                            } else {
+                                newParams.set('sort', props.sort)
+                            }
+                            const queryString = newParams.toString()
+                            const url = queryString ? `/hots/${format(date, 'yyyy-MM-dd')}/${format(date, 'yyyy-MM-dd')}?${queryString}` : `/hots/${format(date, 'yyyy-MM-dd')}/${format(date, 'yyyy-MM-dd')}`
+                            router.push(url)
                         }
                     }}
                     initialFocus
