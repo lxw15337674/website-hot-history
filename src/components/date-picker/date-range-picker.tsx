@@ -209,11 +209,13 @@ export default function DateRangePicker({
     onDateChange?.(tempDate)
     setOpen(false)
     
-    // 确认后跳转
+    // 确认后跳转，清空关键字参数
     if (tempDate?.from && tempDate?.to) {
       const fromStr = format(tempDate.from, 'yyyy-MM-dd')
       const toStr = format(tempDate.to, 'yyyy-MM-dd')
-      router.push(`/hots/${fromStr}/${toStr}`)
+      // 保留sort参数，但清空keyword参数
+      const currentSort = searchParams.get('sort') || 'hot'
+      router.push(`/hots/${fromStr}/${toStr}?sort=${currentSort}`)
     }
   }
 

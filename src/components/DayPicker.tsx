@@ -41,7 +41,7 @@ export function DatePicker(props: DatePickerProps) {
                     selected={date}
                     onSelect={(date) => {
                         if (date) {
-                            // 跳转到新的 URL
+                            // 跳转到新的 URL，清空关键字参数
                             router.push(`/hots/${format(date, 'yyyy-MM-dd')}?sort=${props.sort}`)
                         }
                     }}

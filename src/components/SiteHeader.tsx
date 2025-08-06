@@ -48,14 +48,16 @@ export function SiteHeaderContent() {
     
     const handleSearchChange = useCallback((keyword: string) => {
         setSearchValue(keyword);
-        const newParams = new URLSearchParams(params.toString());
         if (keyword) {
-            newParams.set('keyword', keyword);
+            // 有关键字时，跳转到全部日期范围
+            router.replace(`/hots/2024-05-20/${dayjs().format('YYYY-MM-DD')}?keyword=${keyword}`);
         } else {
+            // 清空关键字时，保持当前日期范围
+            const newParams = new URLSearchParams(params.toString());
             newParams.delete('keyword');
+            const newUrl = `${pathname}?${newParams.toString()}`;
+            router.replace(newUrl);
         }
-        const newUrl = `${pathname}?${newParams.toString()}`;
-        router.replace(newUrl);
     }, [pathname, params, router]);
 
     return (
