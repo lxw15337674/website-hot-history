@@ -47,9 +47,7 @@ export async function GET(
     // 计算日期范围（ISO 格式）
     const startOfRangeStr = fromDate.startOf('day').toISOString();
     const endOfRangeStr = toDate.endOf('day').toISOString();
-    
-    // 添加查询性能日志
-    console.log(`Querying range: ${from} to ${to}, keyword: "${keyword}", sort: ${sort}`);
+
 
     // 根据排序参数确定排序字段
     let orderByClause;
@@ -198,10 +196,6 @@ export async function GET(
       `;
       results = await db.all(rangeSql);
     }
-    
-    const queryTime = Date.now() - startTime;
-    console.log(`Database query executed in ${queryTime}ms for range ${from} to ${to}`);
-
     return NextResponse.json(results);
   } catch (error) {
     console.error('Database query error:', error);
