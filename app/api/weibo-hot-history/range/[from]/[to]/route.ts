@@ -47,6 +47,9 @@ export async function GET(
     // 计算日期范围（ISO 格式）
     const startOfRangeStr = fromDate.startOf('day').toISOString();
     const endOfRangeStr = toDate.endOf('day').toISOString();
+    
+    // 添加查询性能日志
+    console.log(`Querying range: ${from} to ${to}, keyword: "${keyword}", sort: ${sort}`);
 
     // 根据排序参数确定排序字段
     let orderByClause;
@@ -64,10 +67,11 @@ export async function GET(
         orderByClause = desc(weiboHotHistory.hot);
     }
 
-    // 直接执行数据库查询
+    // 优化后的数据库查询
     const startTime = Date.now();
     
-    const results = await db
+    // 根据是否有关键词调整查询策略
+    let queryBuilder = db
       .select({
         title: weiboHotHistory.title,
         description: weiboHotHistory.description,
@@ -80,19 +84,22 @@ export async function GET(
         origin: weiboHotHistory.origin,
         createdAt: weiboHotHistory.createdAt,
       })
-      .from(weiboHotHistory)
-      .where(
-        and(
-          gte(weiboHotHistory.createdAt, startOfRangeStr),
-          lte(weiboHotHistory.createdAt, endOfRangeStr),
-          ...(keyword ? [or(
-            like(weiboHotHistory.title, `%${keyword}%`),
-            like(weiboHotHistory.description, `%${keyword}%`)
-          )] : [])
-        )
-      )
+      .from(weiboHotHistory);
+    
+    // 构建WHERE条件
+    const whereConditions = [
+      gte(weiboHotHistory.createdAt, startOfRangeStr),
+      lte(weiboHotHistory.createdAt, endOfRangeStr),
+      ...(keyword ? [or(
+        like(weiboHotHistory.title, `%${keyword}%`),
+        like(weiboHotHistory.description, `%${keyword}%`)
+      )] : [])
+    ];
+    
+    const results = await queryBuilder
+      .where(and(...whereConditions))
       .orderBy(orderByClause)
-      .limit(500); // 限制返回数量
+      .limit(keyword ? 200 : 500); // 关键词搜索时减少返回数量
     
     const queryTime = Date.now() - startTime;
     console.log(`Database query executed in ${queryTime}ms for range ${from} to ${to}`);
