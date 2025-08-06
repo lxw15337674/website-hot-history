@@ -3,7 +3,6 @@ import dayjs from 'dayjs';
 import { db } from '../../../../../../src/db/index';
 import { weiboHotHistory } from '../../../../../../db/schema';
 import { desc, gte, lte, and, or, like } from 'drizzle-orm';
-import { memoryCache, generateCacheKey, withCache } from '../../../../../../src/lib/cache';
 
 interface RouteParams {
   params: Promise<{ from: string; to: string }>;
@@ -65,61 +64,40 @@ export async function GET(
         orderByClause = desc(weiboHotHistory.hot);
     }
 
-    // 生成缓存键
-    const cacheKey = generateCacheKey('weibo-range', from, to, sort, keyword);
+    // 直接执行数据库查询
+    const startTime = Date.now();
     
-    // 使用缓存包装的数据库查询
-    const results = await withCache(
-      cacheKey,
-      async () => {
-        const startTime = Date.now();
-        
-        const data = await db
-          .select({
-            title: weiboHotHistory.title,
-            description: weiboHotHistory.description,
-            category: weiboHotHistory.category,
-            url: weiboHotHistory.url,
-            hot: weiboHotHistory.hot,
-            ads: weiboHotHistory.ads,
-            readCount: weiboHotHistory.readCount,
-            discussCount: weiboHotHistory.discussCount,
-            origin: weiboHotHistory.origin,
-            createdAt: weiboHotHistory.createdAt,
-          })
-          .from(weiboHotHistory)
-          .where(
-            and(
-              gte(weiboHotHistory.createdAt, startOfRangeStr),
-              lte(weiboHotHistory.createdAt, endOfRangeStr),
-              ...(keyword ? [or(
-                like(weiboHotHistory.title, `%${keyword}%`),
-                like(weiboHotHistory.description, `%${keyword}%`)
-              )] : [])
-            )
-          )
-          .orderBy(orderByClause)
-          .limit(500); // 限制返回数量
-        
-        const queryTime = Date.now() - startTime;
-        console.log(`Database query executed in ${queryTime}ms for range ${from} to ${to}`);
-        return data;
-      },
-      // 缓存时间：5分钟
-      5 * 60 * 1000
-    );
+    const results = await db
+      .select({
+        title: weiboHotHistory.title,
+        description: weiboHotHistory.description,
+        category: weiboHotHistory.category,
+        url: weiboHotHistory.url,
+        hot: weiboHotHistory.hot,
+        ads: weiboHotHistory.ads,
+        readCount: weiboHotHistory.readCount,
+        discussCount: weiboHotHistory.discussCount,
+        origin: weiboHotHistory.origin,
+        createdAt: weiboHotHistory.createdAt,
+      })
+      .from(weiboHotHistory)
+      .where(
+        and(
+          gte(weiboHotHistory.createdAt, startOfRangeStr),
+          lte(weiboHotHistory.createdAt, endOfRangeStr),
+          ...(keyword ? [or(
+            like(weiboHotHistory.title, `%${keyword}%`),
+            like(weiboHotHistory.description, `%${keyword}%`)
+          )] : [])
+        )
+      )
+      .orderBy(orderByClause)
+      .limit(500); // 限制返回数量
+    
+    const queryTime = Date.now() - startTime;
+    console.log(`Database query executed in ${queryTime}ms for range ${from} to ${to}`);
 
-    // 设置缓存头
-    const response = NextResponse.json(results);
-    response.headers.set('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=600');
-    
-    // 添加缓存状态头
-    const isCached = memoryCache.has(cacheKey);
-    response.headers.set('X-Cache-Status', isCached ? 'HIT' : 'MISS');
-    // 对cacheKey进行Base64编码以避免中文字符导致的ByteString错误
-    response.headers.set('X-Cache-Key', Buffer.from(cacheKey).toString('base64'));
-    
-    return response;
+    return NextResponse.json(results);
   } catch (error) {
     console.error('Database query error:', error);
     return NextResponse.json(
