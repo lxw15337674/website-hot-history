@@ -34,6 +34,10 @@ const sortConfig = [
         label: "原创",
         value: "origin"
     },
+    {
+        label: "时间",
+        value: "time"
+    },
 ]
 export function SiteHeaderContent() {
     const pathname = usePathname()

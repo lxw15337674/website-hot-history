@@ -55,8 +55,12 @@ export function SearchableWeiboPage({ initialData, from, to }: SearchableWeiboPa
     <div className="container mx-auto px-4 py-2">
 
       {loading && (
-        <div className="text-center py-4 text-muted-foreground">
-          搜索中...
+        <div className="flex flex-col items-center justify-center py-8 space-y-4">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          <div className="text-center text-muted-foreground">
+            <p className="text-lg font-medium">加载中...</p>
+            <p className="text-sm">正在获取热搜数据</p>
+          </div>
         </div>
       )}
 

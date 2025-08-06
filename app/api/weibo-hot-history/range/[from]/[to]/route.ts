@@ -65,6 +65,9 @@ export async function GET(
       case 'origin':
         orderByClause = desc(weiboHotHistory.origin);
         break;
+      case 'time':
+        orderByClause = desc(weiboHotHistory.createdAt);
+        break;
       default:
         orderByClause = desc(weiboHotHistory.hot);
     }
@@ -115,6 +118,20 @@ export async function GET(
           hot: weiboHotHistory.hot,
           readCount: weiboHotHistory.readCount,
           discussCount: weiboHotHistory.discussCount,
+        };
+        break;
+      case 'time':
+        selectFields = {
+          createdAt: weiboHotHistory.createdAt,
+          title: weiboHotHistory.title,
+          description: weiboHotHistory.description,
+          category: weiboHotHistory.category,
+          url: weiboHotHistory.url,
+          ads: weiboHotHistory.ads,
+          hot: weiboHotHistory.hot,
+          readCount: weiboHotHistory.readCount,
+          discussCount: weiboHotHistory.discussCount,
+          origin: weiboHotHistory.origin,
         };
         break;
       default: // hot
@@ -185,6 +202,10 @@ export async function GET(
           case 'origin':
             indexHint = 'INDEXED BY idx_weibo_main_origin';
             orderField = 'origin DESC';
+            break;
+          case 'time':
+            indexHint = 'INDEXED BY idx_weibo_created_at';
+            orderField = 'createdAt DESC';
             break;
           default:
             indexHint = 'INDEXED BY idx_weibo_main_hot';
