@@ -39,7 +39,7 @@ export function WeiboList({ data, searchKeyword }: WeiboListProps) {
                 </a>
               </CardTitle>
               <div className="flex flex-shrink-0 space-x-1">
-                {item.ads && (
+                {!!item.ads && (
                   <Badge variant="outline" className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200 border-yellow-300 dark:border-yellow-700">
                     广告
                   </Badge>
