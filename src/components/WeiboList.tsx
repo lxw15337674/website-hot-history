@@ -1,13 +1,21 @@
 
 import { SavedWeibo } from '../../type';
 import { Badge } from './ui/badge';
+import { Button } from './ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './ui/card';
 import { numberWithUnit } from '../lib/utils';
+import { Brain } from 'lucide-react';
 import dayjs from 'dayjs';
 
 interface WeiboListProps {
   data: SavedWeibo[];
   searchKeyword?: string;
+}
+
+// URL构建函数 - 为微博话题生成AI搜索链接
+function buildWeiboAISearchUrl(title: string): string {
+  const encodedTitle = encodeURIComponent(title);
+  return `https://s.weibo.com/aisearch?q=${encodedTitle}&Refer=weibo_aisearch`;
 }
 
 // 高亮关键词的辅助函数
@@ -33,11 +41,25 @@ export function WeiboList({ data, searchKeyword }: WeiboListProps) {
         <Card key={`${item.title}-${index}`} className={`overflow-hidden flex flex-col ${item.ads ? 'border-yellow-500 dark:border-yellow-500' : ''}`}>
           <CardHeader className="pb-2">
             <div className="flex justify-between items-start">
-              <CardTitle className="text-lg font-bold line-clamp-2">
-                <a href={item.url} target="_blank" rel="noopener noreferrer" className="hover:text-blue-500 transition-colors">
-                  {searchKeyword ? highlightKeyword(item.title, searchKeyword) : item.title}
-                </a>
-              </CardTitle>
+              <div className="flex items-start gap-2 flex-1 min-w-0">
+                <CardTitle className="text-lg font-bold line-clamp-2 flex-1">
+                  <a href={item.url} target="_blank" rel="noopener noreferrer" className="hover:text-blue-500 transition-colors">
+                    {searchKeyword ? highlightKeyword(item.title, searchKeyword) : item.title}
+                  </a>
+                </CardTitle>
+                {!item.ads && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex-shrink-0 h-7 px-2 text-xs"
+                    onClick={() => window.open(buildWeiboAISearchUrl(item.title), '_blank', 'noopener,noreferrer')}
+                    title={`AI搜索：${item.title}`}
+                  >
+                    <Brain className="w-3 h-3 mr-1" />
+                    AI搜索
+                  </Button>
+                )}
+              </div>
               <div className="flex flex-shrink-0 space-x-1">
                 {!!item.ads && (
                   <Badge variant="outline" className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200 border-yellow-300 dark:border-yellow-700">
