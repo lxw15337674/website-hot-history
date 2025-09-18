@@ -41,25 +41,11 @@ export function WeiboList({ data, searchKeyword }: WeiboListProps) {
         <Card key={`${item.title}-${index}`} className={`overflow-hidden flex flex-col ${item.ads ? 'border-yellow-500 dark:border-yellow-500' : ''}`}>
           <CardHeader className="pb-2">
             <div className="flex justify-between items-start">
-              <div className="flex items-start gap-2 flex-1 min-w-0">
-                <CardTitle className="text-lg font-bold line-clamp-2 flex-1">
-                  <a href={item.url} target="_blank" rel="noopener noreferrer" className="hover:text-blue-500 transition-colors">
-                    {searchKeyword ? highlightKeyword(item.title, searchKeyword) : item.title}
-                  </a>
-                </CardTitle>
-                {!item.ads && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="flex-shrink-0 h-7 px-2 text-xs"
-                    onClick={() => window.open(buildWeiboAISearchUrl(item.title), '_blank', 'noopener,noreferrer')}
-                    title={`AI搜索：${item.title}`}
-                  >
-                    <Brain className="w-3 h-3 mr-1" />
-                    AI搜索
-                  </Button>
-                )}
-              </div>
+              <CardTitle className="text-lg font-bold line-clamp-2">
+                <a href={item.url} target="_blank" rel="noopener noreferrer" className="hover:text-blue-500 transition-colors">
+                  {searchKeyword ? highlightKeyword(item.title, searchKeyword) : item.title}
+                </a>
+              </CardTitle>
               <div className="flex flex-shrink-0 space-x-1">
                 {!!item.ads && (
                   <Badge variant="outline" className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200 border-yellow-300 dark:border-yellow-700">
@@ -83,8 +69,8 @@ export function WeiboList({ data, searchKeyword }: WeiboListProps) {
             )}
           </CardHeader>
 
-          <CardFooter className="flex flex-col items-start space-y-2 text-sm text-gray-500 dark:text-gray-400 pt-4 mt-auto">
-            <div className="flex items-start space-x-2">
+          <CardFooter className="flex justify-between items-center text-sm text-gray-500 dark:text-gray-400 pt-4 mt-auto">
+            <div className="flex items-center space-x-2 flex-wrap">
               <span>热度: {numberWithUnit(item.hot)}</span>
               {item.readCount !== undefined && item.readCount > 0 && (
                 <span>阅读: {numberWithUnit(item.readCount)}</span>
@@ -95,8 +81,21 @@ export function WeiboList({ data, searchKeyword }: WeiboListProps) {
               {item.origin !== undefined && item.origin > 0 && (
                 <span>原创: {numberWithUnit(item.origin)}</span>
               )}
-
             </div>
+
+            {!item.ads && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex-shrink-0 h-7 px-2 text-xs ml-2"
+                onClick={() => window.open(buildWeiboAISearchUrl(item.title), '_blank', 'noopener,noreferrer')}
+                title={`AI搜索：${item.title}`}
+              >
+                <Brain className="w-3 h-3 mr-1" />
+                <span className="hidden sm:inline">AI搜索</span>
+                <span className="sm:hidden">AI</span>
+              </Button>
+            )}
           </CardFooter>
         </Card>
       ))}
