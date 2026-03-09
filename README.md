@@ -34,3 +34,37 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+
+## Multi-Platform Hourly Crawl
+
+This project now supports hourly crawls for:
+
+- Weibo
+- Zhihu
+- Douyin
+- Toutiao
+- Bilibili
+- XiaoHongShu
+- Baidu Hot
+- Baidu Tieba Hot
+
+### Environment variables
+
+- `TURSO_DATABASE_URL`
+- `TURSO_AUTH_TOKEN`
+- `WEIBO_COOKIE` (required for Weibo source)
+- `XHS_HEADERS_JSON` (optional JSON string to override XiaoHongShu headers)
+
+### Commands
+
+```bash
+pnpm hot:init-schema
+pnpm crawl:hourly
+pnpm crawl:hourly -- --dry-run
+```
+
+### New APIs
+
+- `GET /api/hot/latest?limit=10`
+- `GET /api/hot/{platform}/{board}?hour=2026-03-09 10:00:00`
+- `GET /api/hot/{platform}/{board}?from=2026-03-09&to=2026-03-10`
