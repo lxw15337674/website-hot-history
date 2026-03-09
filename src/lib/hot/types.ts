@@ -1,6 +1,6 @@
-export type PlatformKey = 'weibo' | 'zhihu' | 'douyin' | 'toutiao' | 'bilibili' | 'xhs' | 'baidu';
+export type PlatformKey = 'weibo' | 'zhihu' | 'douyin' | 'toutiao' | 'bilibili' | 'xhs' | 'baidu' | 'youtube';
 
-export type BoardKey = 'realtime_hot' | 'tieba_hot';
+export type BoardKey = 'realtime_hot' | 'tieba_hot' | 'trending_us' | 'trending_jp' | 'trending_gb' | 'trending_hk';
 
 export interface HotItem {
   rank: number;

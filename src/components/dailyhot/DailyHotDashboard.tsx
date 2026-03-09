@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useEffect, useMemo, useState } from 'react';
 import { ArrowUpToLine, Github, LayoutGrid, Search, X } from 'lucide-react';
 import { ModeToggle } from '@/components/ModeToggle';
@@ -29,7 +30,41 @@ const platformColors: Record<string, string> = {
   bilibili: 'bg-cyan-500/15 text-cyan-300 border-cyan-500/40',
   xhs: 'bg-red-500/15 text-red-300 border-red-500/40',
   baidu: 'bg-indigo-500/15 text-indigo-300 border-indigo-500/40',
+  youtube: 'bg-rose-600/15 text-rose-300 border-rose-600/40',
 };
+
+const platformLogos: Record<string, { src: string; alt: string }> = {
+  weibo: { src: '/platform-icons/weibo.ico', alt: '微博' },
+  zhihu: { src: '/platform-icons/zhihu.ico', alt: '知乎' },
+  douyin: { src: '/platform-icons/douyin.ico', alt: '抖音' },
+  toutiao: { src: '/platform-icons/toutiao.ico', alt: '今日头条' },
+  bilibili: { src: '/platform-icons/bilibili.ico', alt: 'B站' },
+  xhs: { src: '/platform-icons/xhs.ico', alt: '小红书' },
+  baidu: { src: '/platform-icons/baidu.ico', alt: '百度' },
+  youtube: { src: '/platform-icons/youtube.ico', alt: 'YouTube' },
+};
+
+function PlatformLogo({ platformKey, className }: { platformKey: string; className?: string }) {
+  const logo = platformLogos[platformKey];
+  if (!logo) {
+    return (
+      <span className={cn('inline-flex h-6 w-6 items-center justify-center rounded-sm border border-zinc-700 bg-zinc-800', className)}>
+        <LayoutGrid className="h-4 w-4 text-zinc-400" />
+      </span>
+    );
+  }
+
+  return (
+    <span
+      className={cn(
+        'inline-flex h-6 w-6 shrink-0 items-center justify-center overflow-hidden rounded-sm border border-zinc-700 bg-white',
+        className,
+      )}
+    >
+      <Image src={logo.src} alt={logo.alt} width={24} height={24} className="h-full w-full object-contain" />
+    </span>
+  );
+}
 
 function formatTime(value: string) {
   const date = new Date(value);
@@ -133,10 +168,18 @@ export function DailyHotDashboard({ boards, historyBoards, generatedAt }: DailyH
                 <SelectValue placeholder="选择平台" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">全部平台</SelectItem>
+                <SelectItem value="all">
+                  <span className="flex items-center gap-2">
+                    <PlatformLogo platformKey="all" />
+                    <span>全部平台</span>
+                  </span>
+                </SelectItem>
                 {platformOptions.map((option) => (
                   <SelectItem key={option.key} value={option.key}>
-                    {option.name}
+                    <span className="flex items-center gap-2">
+                      <PlatformLogo platformKey={option.key} />
+                      <span>{option.name}</span>
+                    </span>
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -150,7 +193,10 @@ export function DailyHotDashboard({ boards, historyBoards, generatedAt }: DailyH
                 <SelectContent>
                   {filteredHistoryBoards.map((board) => (
                     <SelectItem key={board.boardId} value={board.boardId}>
-                      {boardOptionLabel(board)}
+                      <span className="flex items-center gap-2">
+                        <PlatformLogo platformKey={board.platformKey} />
+                        <span>{boardOptionLabel(board)}</span>
+                      </span>
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -255,6 +301,7 @@ export function DailyHotDashboard({ boards, historyBoards, generatedAt }: DailyH
                   <CardHeader className="space-y-3 border-b border-zinc-800 p-4">
                     <div className="flex items-center justify-between gap-3">
                       <div className="flex min-w-0 items-center gap-2">
+                        <PlatformLogo platformKey={board.platformKey} />
                         <Badge className={cn('border', platformColors[board.platformKey] ?? 'border-zinc-600 bg-zinc-800')}>
                           {board.platformName}
                         </Badge>
@@ -317,6 +364,7 @@ export function DailyHotDashboard({ boards, historyBoards, generatedAt }: DailyH
           <Card className="border-zinc-800 bg-zinc-900/85 shadow-lg shadow-zinc-950/30">
             <CardHeader className="border-b border-zinc-800 p-4">
               <div className="flex flex-wrap items-center gap-2">
+                <PlatformLogo platformKey={activeTimelineBoard.platformKey} />
                 <Badge className={cn('border', platformColors[activeTimelineBoard.platformKey] ?? 'border-zinc-600 bg-zinc-800')}>
                   {activeTimelineBoard.platformName}
                 </Badge>

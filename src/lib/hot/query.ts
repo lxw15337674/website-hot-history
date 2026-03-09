@@ -59,6 +59,8 @@ interface RankItemRow {
 
 let hotSchemaInitialized = false;
 let hotSchemaInitPromise: Promise<void> | null = null;
+const TRANSIENT_DB_RETRY_MAX_ATTEMPTS = 3;
+const TRANSIENT_DB_RETRY_BASE_DELAY_MS = 300;
 
 function isMissingHotTableError(error: unknown) {
   const message = String((error as any)?.message ?? '');
@@ -71,6 +73,26 @@ function isMissingHotTableError(error: unknown) {
     fullMessage.includes('no such table: hot_platforms') ||
     fullMessage.includes('no such table: hot_boards')
   );
+}
+
+function isTransientDbError(error: unknown) {
+  const message = String((error as any)?.message ?? '');
+  const causeMessage = String((error as any)?.cause?.message ?? (error as any)?.cause?.proto?.message ?? '');
+  const fullMessage = `${message} ${causeMessage}`.toLowerCase();
+
+  return (
+    fullMessage.includes('econnreset') ||
+    fullMessage.includes('fetch failed') ||
+    fullMessage.includes('client network socket disconnected') ||
+    fullMessage.includes('before secure tls connection was established') ||
+    fullMessage.includes('etimedout') ||
+    fullMessage.includes('timeout') ||
+    fullMessage.includes('network')
+  );
+}
+
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 async function ensureHotSchemaOnDemand() {
@@ -89,16 +111,24 @@ async function ensureHotSchemaOnDemand() {
 }
 
 async function withHotSchemaRetry<T>(fn: () => Promise<T>): Promise<T> {
-  try {
-    return await fn();
-  } catch (error) {
-    if (!isMissingHotTableError(error)) {
-      throw error;
-    }
+  for (let attempt = 1; attempt <= TRANSIENT_DB_RETRY_MAX_ATTEMPTS; attempt += 1) {
+    try {
+      return await fn();
+    } catch (error) {
+      if (isMissingHotTableError(error)) {
+        await ensureHotSchemaOnDemand();
+      } else if (!isTransientDbError(error)) {
+        throw error;
+      }
 
-    await ensureHotSchemaOnDemand();
-    return await fn();
+      if (attempt >= TRANSIENT_DB_RETRY_MAX_ATTEMPTS) {
+        throw error;
+      }
+      await sleep(TRANSIENT_DB_RETRY_BASE_DELAY_MS * attempt);
+    }
   }
+
+  throw new Error('Unexpected hot query retry state');
 }
 
 function safeParse(value: string | null): Record<string, unknown> | null {
@@ -117,20 +147,22 @@ async function fetchRankItemsBySnapshotIds(snapshotIds: number[], limit: number)
 
   const safeLimit = Number.isFinite(limit) && limit > 0 ? Math.min(limit, 200) : 10;
   const rawSnapshotIds = snapshotIds.map((snapshotId) => sql`${snapshotId}`);
-  const items = await db.all<RankItemRow>(sql`
-    SELECT
-      snapshot_id as snapshotId,
-      rank,
-      title,
-      score_text as scoreText,
-      score_value as scoreValue,
-      url,
-      metadata_json as metadataJson
-    FROM hot_rank_items
-    WHERE snapshot_id IN (${sql.join(rawSnapshotIds, sql`,`)})
-      AND rank <= ${safeLimit}
-    ORDER BY snapshot_id ASC, rank ASC
-  `);
+  const items = await withHotSchemaRetry(() =>
+    db.all<RankItemRow>(sql`
+      SELECT
+        snapshot_id as snapshotId,
+        rank,
+        title,
+        score_text as scoreText,
+        score_value as scoreValue,
+        url,
+        metadata_json as metadataJson
+      FROM hot_rank_items
+      WHERE snapshot_id IN (${sql.join(rawSnapshotIds, sql`,`)})
+        AND rank <= ${safeLimit}
+      ORDER BY snapshot_id ASC, rank ASC
+    `),
+  );
 
   const groupedItems = new Map<number, HotRankItemDTO[]>();
   for (const item of items) {

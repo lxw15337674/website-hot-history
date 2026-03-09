@@ -1,7 +1,10 @@
-import 'dotenv/config';
+import { config as loadEnv } from 'dotenv';
 import { crawlAllSources } from '../src/lib/hot/sources';
 import { parseToSnapshotHour, toSnapshotHour } from '../src/lib/hot/time';
 import { CrawlResult } from '../src/lib/hot/types';
+
+loadEnv({ path: '.env' });
+loadEnv({ path: '.env.local', override: true });
 
 interface CliOptions {
   dryRun: boolean;

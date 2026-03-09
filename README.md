@@ -39,6 +39,7 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 
 This project now supports hourly crawls for:
 
+- YouTube (US / JP / GB / HK)
 - Weibo
 - Zhihu
 - Douyin
@@ -52,6 +53,7 @@ This project now supports hourly crawls for:
 
 - `TURSO_DATABASE_URL`
 - `TURSO_AUTH_TOKEN`
+- `YOUTUBE_API_KEY` (required for YouTube source)
 - `WEIBO_COOKIE` (required for Weibo source)
 - `XHS_HEADERS_JSON` (optional JSON string to override XiaoHongShu headers)
 
@@ -68,3 +70,23 @@ pnpm crawl:hourly -- --dry-run
 - `GET /api/hot/latest?limit=10`
 - `GET /api/hot/{platform}/{board}?hour=2026-03-09 10:00:00`
 - `GET /api/hot/{platform}/{board}?from=2026-03-09&to=2026-03-10`
+
+### GitHub Scheduled Job
+
+Hourly crawl is configured in:
+
+- `.github/workflows/hot-crawl-hourly.yml`
+
+Schedule:
+
+- Every hour at minute `05` (UTC), which is `:05` in Beijing time as well.
+
+Required GitHub repository secrets:
+
+- `TURSO_DATABASE_URL`
+- `TURSO_AUTH_TOKEN`
+- `YOUTUBE_API_KEY`
+- `WEIBO_COOKIE`
+- `XHS_HEADERS_JSON` (optional)
+
+You can also trigger it manually from GitHub Actions with `workflow_dispatch`.

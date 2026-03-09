@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { DailyHotDashboard } from '@/components/dailyhot/DailyHotDashboard';
-import { getLatestBoardSnapshots, getRecentBoardHistory } from '@/lib/hot/query';
+import { HotBoardHistoryDTO, HotBoardSnapshotDTO, getLatestBoardSnapshots, getRecentBoardHistory } from '@/lib/hot/query';
 
 export const dynamic = 'force-dynamic';
 
@@ -10,7 +10,14 @@ export const metadata: Metadata = {
 };
 
 export default async function DailyHotPage() {
-  const [boards, historyBoards] = await Promise.all([getLatestBoardSnapshots(30), getRecentBoardHistory(24, 10)]);
+  let boards: HotBoardSnapshotDTO[] = [];
+  let historyBoards: HotBoardHistoryDTO[] = [];
+
+  try {
+    [boards, historyBoards] = await Promise.all([getLatestBoardSnapshots(30), getRecentBoardHistory(24, 10)]);
+  } catch (error) {
+    console.error('[dailyhot] failed to load hot data:', error);
+  }
 
   return <DailyHotDashboard boards={boards} historyBoards={historyBoards} generatedAt={new Date().toISOString()} />;
 }

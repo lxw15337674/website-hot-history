@@ -5,6 +5,7 @@ const DEFAULT_UA =
 
 const REQUEST_TIMEOUT_MS = 15000;
 const MAX_ITEMS = 50;
+const YOUTUBE_API_BASE_URL = 'https://www.googleapis.com/youtube/v3/videos';
 
 const DEFAULT_XHS_HEADERS: Record<string, string> = {
   'User-Agent':
@@ -104,6 +105,66 @@ function getXhsHeaders(): Record<string, string> {
   }
 }
 
+function formatNumber(value: number): string {
+  return new Intl.NumberFormat('en-US').format(value);
+}
+
+function buildYouTubeTrendingSource(params: {
+  regionCode: 'US' | 'JP' | 'GB' | 'HK';
+  boardKey: BoardKey;
+  boardName: string;
+}): SourceDefinition {
+  const sourceUrl = `${YOUTUBE_API_BASE_URL}?part=snippet,statistics&chart=mostPopular&regionCode=${params.regionCode}&maxResults=${MAX_ITEMS}`;
+
+  return {
+    platformKey: 'youtube',
+    platformName: 'YouTube',
+    boardKey: params.boardKey,
+    boardName: params.boardName,
+    sourceUrl,
+    fetcher: async () => {
+      const apiKey = process.env.YOUTUBE_API_KEY?.trim();
+      if (!apiKey) {
+        throw new Error('YOUTUBE_API_KEY is missing');
+      }
+
+      const url = new URL(YOUTUBE_API_BASE_URL);
+      url.searchParams.set('part', 'snippet,statistics');
+      url.searchParams.set('chart', 'mostPopular');
+      url.searchParams.set('regionCode', params.regionCode);
+      url.searchParams.set('maxResults', String(MAX_ITEMS));
+      url.searchParams.set('key', apiKey);
+
+      const payload = await fetchJson(url.toString());
+      const list = Array.isArray(payload?.items) ? payload.items : [];
+      const items: HotItem[] = list.map((entry: any, idx: number) => {
+        const videoId = entry?.id ? String(entry.id) : null;
+        const rawViewCount = entry?.statistics?.viewCount;
+        const scoreValue = scoreToNumber(rawViewCount);
+        return {
+          rank: idx + 1,
+          title: String(entry?.snippet?.title ?? '').trim(),
+          scoreText: scoreValue != null ? formatNumber(scoreValue) : rawViewCount != null ? String(rawViewCount) : null,
+          scoreValue,
+          url: normalizeUrl(videoId ? `https://www.youtube.com/watch?v=${videoId}` : null),
+          metadata: {
+            videoId,
+            channelTitle: entry?.snippet?.channelTitle ?? null,
+            publishedAt: entry?.snippet?.publishedAt ?? null,
+          },
+        };
+      });
+
+      const filtered = items.filter((item) => item.title);
+      if (!filtered.length) {
+        throw new Error(`No YouTube trending items parsed for region ${params.regionCode}`);
+      }
+
+      return { items: filtered, rawPayload: payload };
+    },
+  };
+}
+
 function buildSuccess(def: SourceDefinition, payload: { items: HotItem[]; rawPayload: unknown }): CrawlResult {
   const data: HotBoardPayload = {
     platformKey: def.platformKey,
@@ -130,6 +191,26 @@ function buildFailure(def: SourceDefinition, error: unknown): CrawlResult {
 }
 
 const sourceDefinitions: SourceDefinition[] = [
+  buildYouTubeTrendingSource({
+    regionCode: 'US',
+    boardKey: 'trending_us',
+    boardName: '热榜 US',
+  }),
+  buildYouTubeTrendingSource({
+    regionCode: 'JP',
+    boardKey: 'trending_jp',
+    boardName: '热榜 JP',
+  }),
+  buildYouTubeTrendingSource({
+    regionCode: 'GB',
+    boardKey: 'trending_gb',
+    boardName: '热榜 GB',
+  }),
+  buildYouTubeTrendingSource({
+    regionCode: 'HK',
+    boardKey: 'trending_hk',
+    boardName: '热榜 HK',
+  }),
   {
     platformKey: 'weibo',
     platformName: '微博',
